@@ -379,6 +379,3 @@ def view_results():
     rows = c.fetchall()
     conn.close()
     return render_template('view_results.html', results=rows)
-
-if __name__ == '__main__':
-    app.run(debug=True)
