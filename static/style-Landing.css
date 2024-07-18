@@ -90,10 +90,14 @@ p {
   overflow: auto;
   padding: 0 40px;
 }
-.flex ul{
+.flex ul {
   display: flex;
 }
-
+.navbar a {
+  color: #fff;
+  padding: 10px;
+  margin: 0px 5px;
+}
 .navbar a:hover {
   border-bottom: 2px #fff solid;
 }
