@@ -1,35 +1,57 @@
 <!doctype html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-    <title>Quiz</title>
+    <meta charset="UTF-8">
+    <title>اختبار</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="icon" href="azura.png">
+    <link rel="icon" href="logo-azura.svg">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
+        body {
+            direction: rtl;
+            text-align: right;
+            font-family: Tajawal;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .float-right {
+            float: left; 
+        }
+        .form-container label {
+            text-align: right;
+        }
+        .form-check-label {
+            margin-right: 20px; 
+        }
+    </style>
 </head>
 <body>
     <div class="jumbotron text-center">
-        <img src="{{ url_for('static', filename='logo-azura.svg') }}" alt="Top Right Photo" class="float-right" id="logo">
-        <h1 style="text-align: center;">Formation D'Employée</h1>
+        <img src="{{ url_for('static', filename='logo-azura.svg') }}" alt="logo-azura" class="float-right" id="logo">
+        <h1>تدريب الموظفين</h1>
     </div>
 
     <div class="container mt-5">
-        <h4 style="margin-bottom: 5%;text-align: center;font-family: -webkit-body;">S'il vous plait Entrer votre informations personnelles et cochez les réponses</h4>
+        <h4 style="margin-bottom: 5%; text-align: center; font-family: Tajawal;color: snow;">يرجى إدخال معلوماتك الشخصية ووضع العلامات على الإجابات</h4>
         <form action="/submit" method="post" class="form-container border-form">
+            <input type="hidden" name="language" value="ar">
             <div class="row">
                 <div class="col">
-                    <label for="emp_id">Employee ID:</label>
+                    <label for="emp_id">رقم الموظف:</label>
                     <input type="text" class="form-control" id="emp_id" name="emp_id" required>
                 </div>
                 <div class="col">
-                    <label for="cin">CIN :</label>
+                    <label for="cin">رقم التعريف الوطني:</label>
                     <input type="text" class="form-control" id="cin" name="cin" required>
                 </div>
                 <div class="col">
-                    <label for="first_name">Prénom:</label>
+                    <label for="first_name">الاسم:</label>
                     <input type="text" class="form-control" id="first_name" name="first_name" required>
                 </div>
                 <div class="col">
-                    <label for="last_name">Nom:</label>
+                    <label for="last_name">اللقب:</label>
                     <input type="text" class="form-control" id="last_name" name="last_name" required>
                 </div>
             </div>
@@ -48,9 +70,9 @@
                     </div>
                 {% endfor %}
             </div>
-            <button type="submit" class="submit-button">Valider</button>
+            <button type="submit" class="submit-button">إرسال</button>
         </form>
     </div>
-    <div style="height: 50px;"></div> 
+    <div style="height: 50px;"></div>
 </body>
 </html>

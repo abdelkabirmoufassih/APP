@@ -123,149 +123,149 @@ questions = {
     "correct_answers": ["In case of epistaxis, stay in place", "In case of a bleeding wound, stay in place and wait for first aid", "In case of the presence of bodily substances, stay in place and follow the responsible person's instructions"]
 },
 {
-    "question": "7- What are the hygiene rules to follow when using the restrooms?",
+    "question": "7- What are the hygiene rules to follow when using the restrooms ?",
     "options": ["Remove the coat only", "Remove all work attire", "Disinfect hands before entering", "Wash and disinfect hands after use and before wearing work attire"],
     "correct_answers": ["Remove all work attire", "Wash and disinfect hands after use and before wearing work attire"]
 },
 {
-    "question": "8- When should gloves be changed?",
+    "question": "8- When should gloves be changed ?",
     "options": ["After changing the worksite, after using the restroom", "After 1 hour of work", "Dirty and torn gloves", "Every time"],
     "correct_answers": ["After changing the worksite, after using the restroom", "Dirty and torn gloves"]
 },
 {
-    "question": "9- What should I do before entering the station?",
+    "question": "9- What should I do before entering the station ?",
     "options": ["Wash your face", "Wash, dry and disinfect hands and disinfect shoe soles", "Close the doors after each use", "No need to disinfect hands. Washing is sufficient"],
     "correct_answers": ["Wash, dry and disinfect hands and disinfect shoe soles", "Close the doors after each use"]
 },
 {
-    "question": "10- What should I do in case of pest detection?",
+    "question": "10- What should I do in case of pest detection ?",
     "options": ["Inform the concerned service", "Eliminate the pest then inform the nearest responsible person", "Stop the machine immediately and inform the line manager", "Leave insects and eliminate animals"],
     "correct_answers": ["Inform the concerned service", "Eliminate the pest then inform the nearest responsible person", "Stop the machine immediately and inform the line manager"]
 },
 {
-    "question": "11- What action should be taken in case of the presence of a foreign person inside the station?",
+    "question": "11- What action should be taken in case of the presence of a foreign person inside the station ?",
     "options": ["Warn the foreign person", "Inform the nearest responsible person", "Inform the security guard", "I am not concerned with this action"],
     "correct_answers": ["Inform the nearest responsible person", "Inform the security guard"]
 },
 {
-    "question": "12- What is the purpose of having different colored coats in the station?",
+    "question": "12- What is the purpose of having different colored coats in the station ?",
     "options": ["Identifying people by service", "Quickly detecting foreign persons", "Protecting people and the product", "No purpose"],
     "correct_answers": ["Identifying people by service", "Quickly detecting foreign persons", "Protecting people and the product"]
 },
 {
-    "question": "13- What are the physical risks?",
+    "question": "13- What are the physical risks ?",
     "options": ["Paint debris", "Jewelry", "Grease", "Pest traces"],
     "correct_answers": ["Paint debris", "Jewelry"]
 },
 {
-    "question": "14- What are the chemical risks?",
+    "question": "14- What are the chemical risks ?",
     "options": ["Paint", "Plastic pieces", "Cleaning products", "Degreasing products for machines"],
     "correct_answers": ["Paint", "Cleaning products", "Degreasing products for machines"]
 },
 {
-    "question": "15- What are the biological risks?",
+    "question": "15- What are the biological risks ?",
     "options": ["Bodily substances", "Rotten product", "Contagious diseases", "Jewelry"],
     "correct_answers": ["Bodily substances", "Rotten product", "Contagious diseases"]
 },
 {
-    "question": "16- What is your reaction if someone on your team exhibits unsanitary behavior?",
+    "question": "16- What is your reaction if someone on your team exhibits unsanitary behavior ?",
     "options": ["Immediate awareness", "Notify the concerned service for a training request", "No action", "It's not my responsibility"],
     "correct_answers": ["Immediate awareness", "Notify the concerned service for a training request"]
 },
 {
-    "question": "17- What are the instructions to follow when accompanying a visitor or service provider?",
+    "question": "17- What are the instructions to follow when accompanying a visitor or service provider ?",
     "options": ["Explain and sign the visitor form", "Wear jewelry and personal items", "Wear a dedicated visitor outfit", "Respect sanitary rules for visitors"],
     "correct_answers": ["Explain and sign the visitor form", "Wear a dedicated visitor outfit", "Respect sanitary rules for visitors"]
 }],
 "ar":[{
-    "question": "1- ما هي الأشياء والمنتجات المحظورة قبل الدخول إلى المحطة؟",
+    "question": "1- ما هي الأشياء والمنتجات المحظورة قبل الدخول إلى المحطة ؟",
     "options": ["الأشياء الزجاجية", "الأدوات البلاستيكية", "الأدوية", "الطماطم والفلفل"],
     "correct_answers": ["الأشياء الزجاجية", "الطماطم والفلفل"]
 },
 {
-    "question": "2- ما هي المحظورات داخل المحطة؟",
+    "question": "2- ما هي المحظورات داخل المحطة ؟",
     "options": ["المجوهرات", "اللحية غير المحمية", "المنتجات الغذائية / المواد المسببة للحساسية", "النظارات الشمسية المكسورة أو المتشققة"],
     "correct_answers": ["المجوهرات", "اللحية غير المحمية", "المنتجات الغذائية / المواد المسببة للحساسية", "النظارات الشمسية المكسورة أو المتشققة"]
 },
 {
-    "question": "3- ما هي خصائص الزي المناسب للعمل؟",
+    "question": "3- ما هي خصائص الزي المناسب للعمل ؟",
     "options": ["معطف معدل/أحذية مفتوحة", "معطف يغطي الملابس الشخصية ونظيف", "تغطية الشعر بوشاح أو قبعة", "ملابس بنقوش زخرفية (أحجار/ترتر)"],
     "correct_answers": ["معطف يغطي الملابس الشخصية ونظيف", "تغطية الشعر بوشاح أو قبعة"]
 },
 {
-    "question": "4- كيف يجب ترتيب الأغراض في الخزائن؟",
+    "question": "4- كيف يجب ترتيب الأغراض في الخزائن ؟",
     "options": ["وضع كل شيء في حقيبة واحدة", "فصل الزي العمل عن الأشياء الشخصية الأخرى", "وضع الطعام تحت الملابس", "وضع المنتجات الزجاجية فوق"],
     "correct_answers": ["فصل الزي العمل عن الأشياء الشخصية الأخرى"]
 },
 {
-    "question": "5- ماذا يجب أن يتم في حال وجود جسم غريب؟",
+    "question": "5- ماذا يجب أن يتم في حال وجود جسم غريب ؟",
     "options": ["إيقاف الماكينة وإزالة الجسم الغريب (الآفة)", "إبلاغ المسؤول ثم إيقاف الماكينة", "إيقاف الماكينة ثم إبلاغ المسؤول", "رميه في القمامة"],
     "correct_answers": ["إيقاف الماكينة وإزالة الجسم الغريب (الآفة)", "إيقاف الماكينة ثم إبلاغ المسؤول"]
 },
 {
-    "question": "6- ماذا يجب أن يتم في حالة الحادث/وجود مواد جسدية؟",
+    "question": "6- ماذا يجب أن يتم في حالة الحادث/وجود مواد جسدية ؟",
     "options": ["في حالة النزيف الأنفي، البقاء في مكانك", "في حالة الجرح النازف، البقاء في مكانك وانتظار الإسعافات الأولية", "في حالة التقيؤ، إبلاغ العيادة", "في حالة وجود مواد جسدية، البقاء في مكانك واتباع تعليمات المسؤول"],
     "correct_answers": ["في حالة النزيف الأنفي، البقاء في مكانك", "في حالة الجرح النازف، البقاء في مكانك وانتظار الإسعافات الأولية", "في حالة وجود مواد جسدية، البقاء في مكانك واتباع تعليمات المسؤول"]
 },
 {
-    "question": "7- ما هي قواعد النظافة التي يجب اتباعها عند استخدام الحمامات؟",
+    "question": "7- ما هي قواعد النظافة التي يجب اتباعها عند استخدام الحمامات ؟",
     "options": ["خلع المعطف فقط", "خلع كامل زي العمل", "تطهير اليدين قبل الدخول", "غسل وتطهير اليدين بعد الاستخدام وقبل ارتداء زي العمل"],
     "correct_answers": ["خلع كامل زي العمل", "غسل وتطهير اليدين بعد الاستخدام وقبل ارتداء زي العمل"]
 },
 {
-    "question": "8- متى يجب تغيير القفازات؟",
+    "question": "8- متى يجب تغيير القفازات ؟",
     "options": ["بعد تغيير مكان العمل، بعد استخدام الحمام", "بعد ساعة من العمل", "قفازات متسخة وممزقة", "كل مرة"],
     "correct_answers": ["بعد تغيير مكان العمل، بعد استخدام الحمام", "قفازات متسخة وممزقة"]
 },
 {
-    "question": "9- ماذا يجب أن أفعل قبل الدخول إلى المحطة؟",
+    "question": "9- ماذا يجب أن أفعل قبل الدخول إلى المحطة ؟",
     "options": ["غسل وجهك", "غسل وتجفيف وتطهير اليدين وتطهير نعل الأحذية", "إغلاق الأبواب بعد كل استخدام", "ليس من الضروري تطهير اليدين. الغسل يكفي"],
     "correct_answers": ["غسل وتجفيف وتطهير اليدين وتطهير نعل الأحذية", "إغلاق الأبواب بعد كل استخدام"]
 },
 {
-    "question": "10- ماذا يجب أن أفعل في حالة اكتشاف آفات؟",
+    "question": "10- ماذا يجب أن أفعل في حالة اكتشاف آفات ؟",
     "options": ["إبلاغ الخدمة المعنية", "إزالة الآفة ثم إبلاغ أقرب مسؤول", "إيقاف الماكينة فوراً وإبلاغ مدير الخط", "ترك الحشرات وإزالة الحيوانات"],
     "correct_answers": ["إبلاغ الخدمة المعنية", "إزالة الآفة ثم إبلاغ أقرب مسؤول", "إيقاف الماكينة فوراً وإبلاغ مدير الخط"]
 },
 {
-    "question": "11- ما هو الإجراء الذي يجب اتخاذه في حالة وجود شخص غريب داخل المحطة؟",
+    "question": "11- ما هو الإجراء الذي يجب اتخاذه في حالة وجود شخص غريب داخل المحطة ؟",
     "options": ["تحذير الشخص الغريب", "إبلاغ أقرب مسؤول", "إبلاغ حارس الأمن", "لست معنيًا بهذا الإجراء"],
     "correct_answers": ["إبلاغ أقرب مسؤول", "إبلاغ حارس الأمن"]
 },
 {
-    "question": "12- ما هو الهدف من وجود ألوان مختلفة للمعاطف في المحطة؟",
+    "question": "12- ما هو الهدف من وجود ألوان مختلفة للمعاطف في المحطة ؟",
     "options": ["تحديد الأشخاص حسب الخدمة", "الكشف السريع عن الأشخاص الغريبين", "حماية الأشخاص والمنتج", "لا هدف"],
     "correct_answers": ["تحديد الأشخاص حسب الخدمة", "الكشف السريع عن الأشخاص الغريبين", "حماية الأشخاص والمنتج"]
 },
 {
-    "question": "13- ما هي المخاطر الفيزيائية؟",
+    "question": "13- ما هي المخاطر الفيزيائية ؟",
     "options": ["شظايا الطلاء", "المجوهرات", "الشحم", "آثار الآفات"],
     "correct_answers": ["شظايا الطلاء", "المجوهرات"]
 },
 {
-    "question": "14- ما هي المخاطر الكيميائية؟",
+    "question": "14- ما هي المخاطر الكيميائية ؟",
     "options": ["الطلاء", "قطع البلاستيك", "منتجات التنظيف", "منتجات إزالة الشحوم للماكينات"],
     "correct_answers": ["الطلاء", "منتجات التنظيف", "منتجات إزالة الشحوم للماكينات"]
 },
 {
-    "question": "15- ما هي المخاطر البيولوجية؟",
+    "question": "15- ما هي المخاطر البيولوجية ؟",
     "options": ["المواد الجسدية", "المنتج الفاسد", "الأمراض المعدية", "المجوهرات"],
     "correct_answers": ["المواد الجسدية", "المنتج الفاسد", "الأمراض المعدية"]
 },
 {
-    "question": "16- ما هو رد فعلك إذا قام شخص من فريقك بسلوك غير صحي؟",
+    "question": "16- ما هو رد فعلك إذا قام شخص من فريقك بسلوك غير صحي ؟",
     "options": ["التوعية الفورية", "إبلاغ الخدمة المعنية لطلب تدريب", "لا يوجد إجراء", "ليس من مسؤوليتي"],
     "correct_answers": ["التوعية الفورية", "إبلاغ الخدمة المعنية لطلب تدريب"]
 },
 {
-    "question": "17- ما هي التعليمات التي يجب اتباعها عند مرافقة زائر أو مزود خدمة؟",
+    "question": "17- ما هي التعليمات التي يجب اتباعها عند مرافقة زائر أو مزود خدمة ؟",
     "options": ["شرح وتوقيع نموذج الزائرين", "ارتداء المجوهرات والأشياء الشخصية", "ارتداء زي مخصص للزائرين", "احترام قواعد النظافة للزائرين"],
     "correct_answers": ["شرح وتوقيع نموذج الزائرين", "ارتداء زي مخصص للزائرين", "احترام قواعد النظافة للزائرين"]
 }]}
 
 @app.route('/')
 def home():
-    return render_template('Landing.html')
+    return render_template('landing.html')
 
 @app.route('/quiz', methods=['POST'])
 def quiz():
@@ -328,9 +328,14 @@ def submit():
 
     conn.commit()
     conn.close()
-
-    return render_template('merci.html')
-
+    if language == "en":
+        return render_template('finish_en.html',success_percentage=success_percentage)
+    elif language == "fr":
+        return render_template('finish_fr.html',success_percentage=success_percentage)
+    elif language == "ar":
+        return render_template('finish_ar.html',success_percentage=success_percentage)
+    else: 
+        return("language not supported",404)
 @app.route('/graphs')
 def graph():
     conn = sqlite3.connect('quiz_results.db')

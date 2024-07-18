@@ -4,7 +4,7 @@
     <title>Quiz</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="icon" href="azura.png">
+    <link rel="icon" href="logo-azura.svg">
 </head>
 <body>
     <div class="jumbotron text-center">
@@ -13,7 +13,7 @@
     </div>
 
     <div class="container mt-5">
-        <h4 style="margin-bottom: 5%;text-align: center;font-family: -webkit-body;">S'il vous plait Entrer votre informations personnelles et cochez les réponses</h4>
+        <h4 style="margin-bottom: 5%;text-align: center;font-family: -webkit-body;color: snow;">S'il vous plait Entrer votre informations personnelles et cochez les réponses</h4>
         <form action="/submit" method="post" class="form-container border-form">
             <input type="hidden" name="language" value="fr">
             <div class="row">
