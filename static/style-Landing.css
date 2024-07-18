@@ -2,13 +2,11 @@
 :root {
   --primary-color: #04b728;
 }
-
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
-
 body {
   font-family: 'Lato', sans-serif;
   color: #333;
@@ -16,35 +14,28 @@ body {
   margin: 0; 
   padding: 0;
 }
-
-ul {
+ul{
   list-style: none;
 }
-
-a {
+a{
   text-decoration: none;
 }
-
 h1, h2 {
   font-weight: 300;
   line-height: 1.2;
   margin: 10px 0px;
 }
-
 p {
   margin: 10px 0px;
 }
-
 .navbar {
   background: var(--primary-color);
   color: #fff;
   height: 70px;
 }
-
 .navbar .flex {
   justify-content: space-between;
 }
-
 .showcase {
   height: 400px;
   background: url('T.svg') no-repeat center center/cover;
@@ -52,22 +43,17 @@ p {
   position: relative;
   z-index: 1; 
 }
-
-.showcase h1 {
+.showcase h1{
   font-size: 40px;
 }
-
-.showcase p {
+.showcase p{
   margin: 20px 0;
 }
-
-.showcase .grid {
+.showcase .grid{
   overflow: visible;
   grid-template-columns: 55% 45%;
   gap: 30px;
 }
-
-
 .showcase::before,
   .showcase::after {
   content: '';
@@ -82,22 +68,12 @@ p {
 }
 .showcase::before {
     bottom: -27px;
-  }
-  .showcase::after{
+}
+.showcase::after{
     bottom: -40px;
     height: 10px;
-  }
-
-
-.card {
-  background: #fff;
-  color: #333;
-  border-radius: 10px;
-  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
-  padding: 20px;
 }
-
-.btn {
+.btn{
   display: inline-block;
   padding: 10px 30px;
   background: var(--primary-color);
@@ -105,12 +81,6 @@ p {
   border: none;
   border-radius: 5px;
 }
-
-.btn-outline {
-  background: transparent;
-  border: 1px #fff solid;
-}
-
 .btn:hover {
   transform: scale(0.98);
 }
@@ -120,14 +90,10 @@ p {
   overflow: auto;
   padding: 0 40px;
 }
-.flex ul {
+.flex ul{
   display: flex;
 }
-.navbar a {
-  color: #fff;
-  padding: 10px;
-  margin: 0px 5px;
-}
+
 .navbar a:hover {
   border-bottom: 2px #fff solid;
 }
@@ -153,12 +119,12 @@ p {
     background: #ffffff;
     text-align: center;
     margin-top: 5%;
-  }
-  .new-section h2 {
+}
+.new-section h2 {
     margin-bottom: 20px;
     font-size: 30px;
-  }
-  .new-section p {
+}
+.new-section p {
     margin-bottom: 20px;
-  }
+}
   
