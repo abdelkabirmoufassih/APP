@@ -314,37 +314,44 @@ def submit_1(language):
 
 
 
-
-
-def get_questions_and_options(language):
-    
-    print(f"Fetching questions and options for language: {language}")
+def get_questions_and_options(quiz_id, language):
+    print(f"Fetching questions and options for quiz_id: {quiz_id}, language: {language}")
     conn = sqlite3.connect('quiz_results.db')
     c = conn.cursor()
 
-    # Fetch questions based on language
-    c.execute('''
+    # Fetch questions based on quiz_id and language
+    query_questions = '''
     SELECT q.id, qt.title 
     FROM Questions q
     JOIN QuestionTrans qt ON q.id = qt.question_id
-    JOIN Quizzes qu ON qu.id = q.quiz_id
-    WHERE qt.language = ?
-    ''', (language,))
+    WHERE q.quiz_id = ? AND qt.language = ?
+    '''
+    print(f"Query for questions: {query_questions}")
+    c.execute(query_questions, (quiz_id, language))
     questions = c.fetchall()
-    print(f"Fetched questions for language '{language}': {questions}")
-    # Fetch options based on language
+
+    # Debugging: Print fetched questions
+    print(f"Fetched questions for quiz_id '{quiz_id}', language '{language}': {questions}")
+
+    # Fetch options based on quiz_id and language
     question_ids = [q[0] for q in questions]
     if not question_ids:
+        print("No questions found.")
         return [], []
 
-    c.execute(f'''
+    query_options = f'''
     SELECT o.question_id, ot.text, o.is_correct 
     FROM Options o
     JOIN OptionTrans ot ON o.id = ot.option_id
     WHERE ot.language = ? AND o.question_id IN ({','.join('?' for _ in question_ids)})
-    ''', [language] + question_ids)
+    '''
+    print(f"Query for options: {query_options}")
+    c.execute(query_options, [language] + question_ids)
     options = c.fetchall()
+
+    # Debugging: Print fetched options
     print(f"Fetched options for questions: {options}")
+
     conn.close()
 
     # Organize the options by question_id
@@ -363,14 +370,18 @@ def get_questions_and_options(language):
             'options': options_dict.get(question_id, [])
         })
 
+    # Debugging: Print organized quiz data
+    print(f"Organized quiz data: {quiz_data}")
+
     return quiz_data
 
 
 
 
-@app.route('/quiz/<language>', methods=['POST','GET'])
-def quiz(language):
-    quiz_data = get_questions_and_options(language)
+@app.route('/quiz/<int:quiz_id>/<language>', methods=['POST','GET'])
+def quiz(quiz_id, language):
+    print(f"Accessing quiz route with quiz_id: {quiz_id}, language: {language}")
+    quiz_data = get_questions_and_options(quiz_id, language)
     print("hi")
     print(quiz_data)
     if language == "en":
