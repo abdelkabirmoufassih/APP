@@ -319,44 +319,61 @@ def get_questions_and_options(quiz_id, language):
     conn = sqlite3.connect('quiz_results.db')
     c = conn.cursor()
 
-    # Fetch questions based on quiz_id and language
-    query_questions = '''
-    SELECT q.id, qt.title 
-    FROM Questions q
-    JOIN QuestionTrans qt ON q.id = qt.question_id
-    WHERE q.quiz_id = ? AND qt.language = ?
-    '''
-    print(f"Executing query for questions: {query_questions}")
-    c.execute(query_questions, (quiz_id, language))
-    questions = c.fetchall()
+    if language == 'en':
+        # Fetch questions and options directly for English
+        query_questions = '''
+        SELECT q.id, q.title 
+        FROM Questions q
+        WHERE q.quiz_id = ?
+        '''
+        c.execute(query_questions, (quiz_id,))
+        questions = c.fetchall()
+        
+        question_ids = [q[0] for q in questions]
+        if not question_ids:
+            print("No questions found.")
+            return []
 
-    # Debugging: Print fetched questions
-    print(f"Fetched questions for quiz_id '{quiz_id}', language '{language}': {questions}")
+        query_options = f'''
+        SELECT o.id, o.question_id, o.text, o.is_correct 
+        FROM Options o
+        WHERE o.question_id IN ({','.join('?' for _ in question_ids)})
+        '''
+        c.execute(query_options, question_ids)
+        options = c.fetchall()
+    else:
+        # Fetch questions with translations for other languages
+        query_questions = '''
+        SELECT q.id, qt.title 
+        FROM Questions q
+        JOIN QuestionTrans qt ON q.id = qt.question_id
+        WHERE q.quiz_id = ? AND qt.language = ?
+        '''
+        c.execute(query_questions, (quiz_id, language))
+        questions = c.fetchall()
+        print(f"Fetched questions: {questions}")
 
-    # Fetch options based on quiz_id and language
-    question_ids = [q[0] for q in questions]
-    if not question_ids:
-        print("No questions found.")
-        return [], []
+        # Fetch options with translations
+        question_ids = [q[0] for q in questions]
+        if not question_ids:
+            print("No questions found.")
+            return []
 
-    query_options = f'''
-    SELECT o.question_id, ot.text, o.is_correct 
-    FROM Options o
-    JOIN OptionTrans ot ON o.id = ot.option_id
-    WHERE ot.language = ? AND o.question_id IN ({','.join('?' for _ in question_ids)})
-    '''
-    print(f"Executing query for options: {query_options}")
-    c.execute(query_options, [language] + question_ids)
-    options = c.fetchall()
-
-    # Debugging: Print fetched options
-    print(f"Fetched options for questions: {options}")
+        query_options = f'''
+        SELECT o.id, o.question_id, ot.text, o.is_correct 
+        FROM Options o
+        JOIN OptionTrans ot ON o.id = ot.option_id
+        WHERE ot.language = ? AND o.question_id IN ({','.join('?' for _ in question_ids)})
+        '''
+        c.execute(query_options, [language] + question_ids)
+        options = c.fetchall()
+        print(f"Fetched options: {options}")
 
     conn.close()
 
     # Organize the options by question_id
     options_dict = {}
-    for question_id, text, is_correct in options:
+    for option_id, question_id, text, is_correct in options:
         if question_id not in options_dict:
             options_dict[question_id] = []
         options_dict[question_id].append({
@@ -373,6 +390,7 @@ def get_questions_and_options(quiz_id, language):
             'options': options_dict.get(question_id, [])
         })
 
+    print(f"Organized quiz data: {quiz_data}")
     return quiz_data
 
 
