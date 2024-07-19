@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request,redirect, url_for,session
-from datetime import datetime
+from datetime import datetime, timedelta
 import sqlite3
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import pytz
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -315,7 +316,7 @@ def submit_1(language):
     return redirect(url_for('quizzes'))
 
 def get_questions_and_options(quiz_id, language):
-    print(f"Fetching questions and options for quiz_id: {quiz_id}, language: {language}")
+
     conn = sqlite3.connect('quiz_results.db')
     c = conn.cursor()
 
@@ -351,8 +352,6 @@ def get_questions_and_options(quiz_id, language):
         '''
         c.execute(query_questions, (quiz_id, language))
         questions = c.fetchall()
-        print(f"Fetched questions: {questions}")
-
         # Fetch options with translations
         question_ids = [q[0] for q in questions]
         if not question_ids:
@@ -367,7 +366,6 @@ def get_questions_and_options(quiz_id, language):
         '''
         c.execute(query_options, [language] + question_ids)
         options = c.fetchall()
-        print(f"Fetched options: {options}")
 
     conn.close()
 
@@ -390,8 +388,6 @@ def get_questions_and_options(quiz_id, language):
             'question_title': question_title,
             'options': options_dict.get(question_id, [])
         })
-
-    print(f"Organized quiz data: {quiz_data}")
     return quiz_data
 
 @app.route('/quizzes')
@@ -414,90 +410,68 @@ def quizzes():
 @app.route('/quiz/<int:quiz_id>/', methods=['POST','GET'])
 def quiz(quiz_id):
     language = session['language']
-    print(f"Accessing quiz route with quiz_id: {quiz_id}, language: {language}")
+    if 'start_time' not in session:
+        session['start_time'] = datetime.now(pytz.utc).isoformat()
     quiz_data = get_questions_and_options(quiz_id, language)
-    if language == "en":
-        return render_template('quiz_en.html', questions=quiz_data, enumerate=enumerate, quiz_id=quiz_id)
-    elif language == "fr": 
-        return render_template('quiz_fr.html',questions=quiz_data, enumerate=enumerate, quiz_id=quiz_id)
-    elif language == "ar":
-        return render_template('quiz_ar.html', questions=quiz_data, enumerate=enumerate, quiz_id=quiz_id)
-    else: 
-        return("language not supported",404)
+    if language :
+        return render_template(f'quiz_{session["language"]}.html', questions=quiz_data, enumerate=enumerate, quiz_id=quiz_id,start_time=session['start_time'])
+    return("language not supported",404)
 
 @app.route('/submit_quiz/<int:quiz_id>', methods=['POST'])
 def submit_quiz(quiz_id):
-    user_id = session.get('user_id')  # Ensure user is logged in
-    if not user_id:
-        return "User not logged in", 401
+    user_id = session.get('user_id')
+    start_time = datetime.fromisoformat(session.get('start_time'))
+    end_time = datetime.utcnow()
 
     conn = sqlite3.connect('quiz_results.db')
     c = conn.cursor()
 
-    # Print the entire form data
-    print("Form Data:", request.form)
+    # Calculate score
+    final_score = 0
+    question_scores = {}
+    for key, value in request.form.items():
+        if key.startswith('question_'):
+            question_id = int(key.split('_')[1])
+            selected_options = request.form.getlist(key)
+            question_scores[question_id] = {'correct': 0, 'incorrect': 0}
 
-    # Start a transaction
-    conn.execute('BEGIN TRANSACTION')
+            for option_id in selected_options:
+                c.execute('SELECT is_correct FROM Options WHERE id = ?', (option_id,))
+                is_correct = c.fetchone()[0]
 
-    try:
-        # Insert a new attempt record
-        c.execute('''
-        INSERT INTO Attempts (user_id, quiz_id, score, status, time)
-        VALUES (?, ?, 0, 'completed', ?)
-        ''', (user_id, quiz_id, datetime.now()))
-        attempt_id = c.lastrowid
+                if is_correct:
+                    question_scores[question_id]['correct'] += 1
+                else:
+                    question_scores[question_id]['incorrect'] += 1
 
-        score = 0
+            if question_scores[question_id]['incorrect'] == 0 and question_scores[question_id]['correct'] > 0:
+                final_score += 4
+            else:
+                final_score += question_scores[question_id]['correct'] - question_scores[question_id]['incorrect']
 
-        # Process each question's answers
-        for question_key in request.form:
-            if question_key.startswith('question_'):
-                question_id = int(question_key.replace('question_', ''))
-                selected_option_ids = request.form.getlist(question_key)  # Get all selected options
+    # Insert attempt into the database
+    c.execute('''
+    INSERT INTO Attempts (user_id, quiz_id, score, status, time)
+    VALUES (?, ?, ?, ?, ?)
+    ''', (user_id, quiz_id, final_score, 'Completed', end_time))
 
-                print(f"Processing Question ID: {question_id}, Selected Option IDs: {selected_option_ids}")
+    attempt_id = c.lastrowid
 
-                for selected_option_id in selected_option_ids:
-                    c.execute('''
-                    SELECT is_correct FROM Options WHERE id = ?
-                    ''', (selected_option_id,))
-                    option = c.fetchone()
-                    print(f"Retrieved Option: {option}")
+    # Insert answers into the database
+    for question_id, scores in question_scores.items():
+        for option_id in request.form.getlist(f'question_{question_id}'):
+            c.execute('''
+            INSERT INTO Answers (attempt_id, question_id, option_id, is_correct)
+            VALUES (?, ?, ?, ?)
+            ''', (attempt_id, question_id, option_id, scores['correct'] > 0 and scores['incorrect'] == 0))
 
-                    if option:
-                        # Ensure that option contains exactly one value
-                        is_correct = option[0]
-                    else:
-                        # Handle case where no option is found
-                        is_correct = False
+    conn.commit()
+    conn.close()
 
-                    # Insert answer record
-                    c.execute('''
-                    INSERT INTO Answers (attempt_id, question_id, option_id, is_correct)
-                    VALUES (?, ?, ?, ?)
-                    ''', (attempt_id, question_id, selected_option_id, is_correct))
+    session.pop('start_time', None)  # Clear the start_time from session after submission
 
-                    # Update score
-                    if is_correct:
-                        score += 1
+    return redirect(url_for('results', attempt_id=attempt_id))
 
-        # Update attempt record with the final score
-        c.execute('''
-        UPDATE Attempts
-        SET score = ?
-        WHERE id = ?
-        ''', (score, attempt_id))
-
-        conn.commit()
-        return redirect(url_for('results', attempt_id=attempt_id))
-
-    except Exception as e:
-        conn.rollback()
-        print(f"Error occurred: {e}")
-        return "An error occurred while processing the quiz", 500
-    finally:
-        conn.close()
 
 @app.route('/results/<int:attempt_id>')
 def results(attempt_id):

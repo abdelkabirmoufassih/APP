@@ -33,6 +33,59 @@
         margin-right: 20px;
       }
     </style>
+    <script>
+      function startTimer(duration, display, form) {
+        var timer = duration,
+          minutes,
+          seconds;
+        var countdown = setInterval(function () {
+          minutes = parseInt(timer / 60, 10);
+          seconds = parseInt(timer % 60, 10);
+
+          minutes = minutes < 10 ? "0" + minutes : minutes;
+          seconds = seconds < 10 ? "0" + seconds : seconds;
+
+          display.textContent = minutes + ":" + seconds;
+
+          if (--timer < 0) {
+            clearInterval(countdown);
+            form.submit();
+          }
+        }, 1000);
+      }
+
+      window.onload = function () {
+        var startTimeStr = "{{ start_time }}";
+        if (!startTimeStr) {
+          console.error("Start time is not defined.");
+          return;
+        }
+
+        var startTime = new Date(startTimeStr).getTime();
+        if (isNaN(startTime)) {
+          console.error("Invalid start time:", startTimeStr);
+          return;
+        }
+
+        var currentTime = new Date().getTime();
+        var elapsedTime = Math.floor((currentTime - startTime) / 1000);
+        var quizDuration = 60 * 20; // 20 minutes in seconds
+        var remainingTime = quizDuration - elapsedTime;
+
+        console.log("Start Time (UTC):", new Date(startTime));
+        console.log("Current Time:", new Date(currentTime));
+        console.log("Elapsed Time (seconds):", elapsedTime);
+        console.log("Remaining Time (seconds):", remainingTime);
+
+        if (remainingTime <= 0) {
+          document.querySelector("#quiz-form").submit();
+        } else {
+          var display = document.querySelector("#time");
+          var form = document.querySelector("#quiz-form");
+          startTimer(remainingTime, display, form);
+        }
+      };
+    </script>
   </head>
   <body>
     <div class="jumbotron text-center">
@@ -56,7 +109,11 @@
       >
         يرجى إدخال معلوماتك الشخصية ووضع العلامات على الإجابات
       </h4>
+      <p>
+        <strong><span id="time">20:00</span>: الوقت المتبقي</strong>
+      </p>
       <form
+        id="quiz-form"
         action="/submit_quiz/{{ quiz_id }}"
         method="post"
         class="form-container border-form"
