@@ -43,9 +43,9 @@
                         <p><strong>{{ question.question_title }}</strong></p>
                         {% for option in question.options %}
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="question-{{ i }}" value="{{ option }}">
+                                <input class="form-check-input" type="checkbox" name="question_{{ question.question_id }}" value="{{ option.text }}">
                                 <label class="form-check-label">
-                                    {{ option }}
+                                    {{ option.text }}
                                 </label>
                             </div>
                         {% endfor %}

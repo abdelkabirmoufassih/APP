@@ -359,7 +359,10 @@ def get_questions_and_options(quiz_id, language):
     for question_id, text, is_correct in options:
         if question_id not in options_dict:
             options_dict[question_id] = []
-        options_dict[question_id].append((text, is_correct))
+        options_dict[question_id].append({
+            'text': text,
+            'is_correct': is_correct
+        })
 
     # Combine questions and their respective options
     quiz_data = []
@@ -369,9 +372,6 @@ def get_questions_and_options(quiz_id, language):
             'question_title': question_title,
             'options': options_dict.get(question_id, [])
         })
-
-    # Debugging: Print organized quiz data
-    print(f"Organized quiz data: {quiz_data}")
 
     return quiz_data
 
