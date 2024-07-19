@@ -317,6 +317,8 @@ def submit_1(language):
 
 
 def get_questions_and_options(language):
+    
+    print(f"Fetching questions and options for language: {language}")
     conn = sqlite3.connect('quiz_results.db')
     c = conn.cursor()
 
@@ -329,7 +331,7 @@ def get_questions_and_options(language):
     WHERE qt.language = ?
     ''', (language,))
     questions = c.fetchall()
-
+    print(f"Fetched questions for language '{language}': {questions}")
     # Fetch options based on language
     question_ids = [q[0] for q in questions]
     if not question_ids:
@@ -342,7 +344,7 @@ def get_questions_and_options(language):
     WHERE ot.language = ? AND o.question_id IN ({','.join('?' for _ in question_ids)})
     ''', [language] + question_ids)
     options = c.fetchall()
-
+    print(f"Fetched options for questions: {options}")
     conn.close()
 
     # Organize the options by question_id
@@ -369,6 +371,8 @@ def get_questions_and_options(language):
 @app.route('/quiz/<language>', methods=['POST','GET'])
 def quiz(language):
     quiz_data = get_questions_and_options(language)
+    print("hi")
+    print(quiz_data)
     if language == "en":
         return render_template('quiz_en.html', questions=quiz_data, enumerate=enumerate)
     elif language == "fr":
