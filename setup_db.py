@@ -86,6 +86,21 @@ def initialize_db():
     (3, 'French', 'Jupiter'),
     (4, 'French', 'Saturne')
     ''')
+    # Insert Arabic question translations
+    c.execute('''
+    INSERT INTO QuestionTrans (question_id, language, title) VALUES
+    (1, 'ar', 'ما هي عاصمة فرنسا?'),
+    (2, 'ar', 'ما هو أكبر كوكب في نظامنا الشمسي?')
+    ''')
+
+    # Insert Arabic options
+    c.execute('''
+    INSERT INTO OptionTrans (option_id, language, text) VALUES
+    (1, 'ar', 'باريس'),
+    (2, 'ar', 'لندن'),
+    (3, 'ar', 'المشتري'),
+    (4, 'ar', 'زحل')
+    ''')
 
     conn.commit()
     conn.close()

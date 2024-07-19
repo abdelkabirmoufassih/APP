@@ -326,7 +326,7 @@ def get_questions_and_options(quiz_id, language):
     JOIN QuestionTrans qt ON q.id = qt.question_id
     WHERE q.quiz_id = ? AND qt.language = ?
     '''
-    print(f"Query for questions: {query_questions}")
+    print(f"Executing query for questions: {query_questions}")
     c.execute(query_questions, (quiz_id, language))
     questions = c.fetchall()
 
@@ -345,7 +345,7 @@ def get_questions_and_options(quiz_id, language):
     JOIN OptionTrans ot ON o.id = ot.option_id
     WHERE ot.language = ? AND o.question_id IN ({','.join('?' for _ in question_ids)})
     '''
-    print(f"Query for options: {query_options}")
+    print(f"Executing query for options: {query_options}")
     c.execute(query_options, [language] + question_ids)
     options = c.fetchall()
 
@@ -378,12 +378,11 @@ def get_questions_and_options(quiz_id, language):
 
 
 
+
 @app.route('/quiz/<int:quiz_id>/<language>', methods=['POST','GET'])
 def quiz(quiz_id, language):
     print(f"Accessing quiz route with quiz_id: {quiz_id}, language: {language}")
     quiz_data = get_questions_and_options(quiz_id, language)
-    print("hi")
-    print(quiz_data)
     if language == "en":
         return render_template('quiz_en.html', questions=quiz_data, enumerate=enumerate)
     elif language == "fr":
