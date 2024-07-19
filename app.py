@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request,redirect
-from datetime import datetime
 import sqlite3
 import pandas as pd
 import plotly.express as px
@@ -270,26 +269,25 @@ def home():
 
 @app.route('/information', methods=['POST'])
 def information():
-    current_date = datetime.now().strftime('%Y-%m-%d')
     language= request.form['language']
     if language == "en":
-        return render_template('information_en.html', current_date = current_date)
+        return render_template('information_en.html')
     elif language == "fr":
-        return render_template('information_fr.html', current_date = current_date)
+        return render_template('information_fr.html')
     elif language == "ar":
-        return render_template('information_ar.html', current_date = current_date)
+        return render_template('information_ar.html')
     else: 
         return("language not supported",404)
 
 @app.route('/submit-1', methods=['POST'])
 def submit_1():
+    
     emp_id = request.form.get('emp_id')
     cin = request.form.get('cin')
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
     service = request.form.get('service')  
     site = request.form.get('site')
-    current_date=request.form.get('current_date')
     language=request.form.get('language')
 
 
