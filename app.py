@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,redirect
+from datetime import datetime
 import sqlite3
 import pandas as pd
 import plotly.express as px
@@ -267,30 +268,73 @@ questions = {
 def home():
     return render_template('landing.html')
 
+@app.route('/information', methods=['POST'])
+def information():
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    language= request.form['language']
+    if language == "en":
+        return render_template('information_en.html', current_date = current_date)
+    elif language == "fr":
+        return render_template('information_fr.html', current_date = current_date)
+    elif language == "ar":
+        return render_template('information_ar.html', current_date = current_date)
+    else: 
+        return("language not supported",404)
+
+@app.route('/submit-1', methods=['POST'])
+def submit_1():
+    emp_id = request.form.get('emp_id')
+    cin = request.form.get('cin')
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+    service = request.form.get('service')  
+    site = request.form.get('site')
+    current_date=request.form.get('current_date')
+    language=request.form.get('language')
+
+
+    
+    conn = sqlite3.connect('quiz_results.db')
+    c = conn.cursor()
+    c.execute('''
+    CREATE TABLE IF NOT EXISTS employee_info (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        emp_id TEXT,
+        cin TEXT,
+        first_name TEXT,
+        last_name TEXT,
+        service TEXT,
+        site TEXT
+    )
+    ''')
+    c.execute('''
+    INSERT INTO employee_info (emp_id, cin, first_name, last_name, service, site)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ''', (emp_id, cin, first_name, last_name, service, site))
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/quiz')  
+
 @app.route('/quiz', methods=['POST'])
 def quiz():
     language= request.form['language']
     if language == "en":
         return render_template('quiz_en.html', questions=questions[language], enumerate=enumerate)
     elif language == "fr":
-        return render_template('quiz_fr.html', questions=questions[language], enumerate=enumerate)
+        return render_template('quiz_fr.html',questions=questions[language], enumerate=enumerate)
     elif language == "ar":
         return render_template('quiz_ar.html', questions=questions[language], enumerate=enumerate)
     else: 
         return("language not supported",404)
     
-@app.route('/submit', methods=['POST'])
-def submit():
+@app.route('/submit-2', methods=['POST'])
+def submit_2():
     total_correct = 0
     total_wrong = 0
     language=request.form["language"]
     total_possible = sum(len(q["correct_answers"]) for q in questions[language])
-
-    
-    emp_id = request.form.get('emp_id')
-    cin = request.form.get('cin')
-    first_name = request.form.get('first_name')
-    last_name = request.form.get('last_name')
 
     for i, question in enumerate(questions[language]):
         selected_options = request.form.getlist(f'question-{i}')
@@ -312,19 +356,15 @@ def submit():
     c.execute('''
     CREATE TABLE IF NOT EXISTS results (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        emp_id TEXT,
-        cin TEXT,
-        first_name TEXT,
-        last_name TEXT,
         correct INTEGER,
         wrong INTEGER,
         success_percentage REAL
     )
     ''')
     c.execute('''
-    INSERT INTO results (emp_id, cin, first_name, last_name, correct, wrong, success_percentage)
-    VALUES (?,?, ?, ?, ?, ?, ?)
-    ''', (emp_id, cin, first_name, last_name, total_correct, total_wrong, success_percentage))
+    INSERT INTO results ( correct, wrong, success_percentage)
+    VALUES (?, ?, ?)
+    ''', (total_correct, total_wrong, success_percentage))
 
     conn.commit()
     conn.close()

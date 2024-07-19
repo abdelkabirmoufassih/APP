@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+    <title>معلومات</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style-Information.css') }}">
+    <link rel="icon" href="logo-azura.svg">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
+         body {
+            direction: rtl;
+            text-align: right;
+            font-family: Tajawal;
+        }
+        
+        
+    </style>
+</head>
+<body>
+    <div class="jumbotron text-center">
+        <img src="{{ url_for('static', filename='logo-azura.svg') }}" alt="شعار" class="float-right" id="logo">
+        <h1 style="text-align: center;">تكوين الموظف</h1>
+    </div>
+
+    <div class="container mt-5">
+        <h4 style="margin-bottom: 5%;text-align: center;font-family: -webkit-body;color: snow;">يرجى إدخال معلوماتك الشخصية</h4>
+        <form action="/submit-1" method="POST" class="form-container border-form">
+            <input type="hidden" name="language" value="ar">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="emp_id">رقم الموظف:</label>
+                    <input type="text" class="form-control" id="emp_id" name="emp_id" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="cin">رقم البطاقة الشخصية:</label>
+                    <input type="text" class="form-control" id="cin" name="cin" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="first_name">الاسم الأول:</label>
+                    <input type="text" class="form-control" id="first_name" name="first_name" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="last_name">اسم العائلة:</label>
+                    <input type="text" class="form-control" id="last_name" name="last_name" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="service">القسم:</label>
+                    <input type="text" class="form-control" id="service" name="service" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="site">الموقع:</label>
+                    <input type="text" class="form-control" id="site" name="site" required> 
+                </div> 
+            </div>
+            <div class="form-row">
+                <div class="form-group" id="form-date">
+                    <label for="current_date">التاريخ:</label>
+                    <input type="text" class="form-control" id="current_date" name="current_date" value="{{ current_date }}" readonly>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary submit-button">تأكيد</button>
+        </form>
+    </div>
+    <div style="height: 50px;"></div> 
+</body>
+</html>

@@ -35,26 +35,8 @@
 
     <div class="container mt-5">
         <h4 style="margin-bottom: 5%; text-align: center; font-family: Tajawal;color: snow;">يرجى إدخال معلوماتك الشخصية ووضع العلامات على الإجابات</h4>
-        <form action="/submit" method="post" class="form-container border-form">
+        <form action="/submit-2" method="post" class="form-container border-form">
             <input type="hidden" name="language" value="ar">
-            <div class="row">
-                <div class="col">
-                    <label for="emp_id">رقم الموظف:</label>
-                    <input type="text" class="form-control" id="emp_id" name="emp_id" required>
-                </div>
-                <div class="col">
-                    <label for="cin">رقم التعريف الوطني:</label>
-                    <input type="text" class="form-control" id="cin" name="cin" required>
-                </div>
-                <div class="col">
-                    <label for="first_name">الاسم:</label>
-                    <input type="text" class="form-control" id="first_name" name="first_name" required>
-                </div>
-                <div class="col">
-                    <label for="last_name">اللقب:</label>
-                    <input type="text" class="form-control" id="last_name" name="last_name" required>
-                </div>
-            </div>
             <div class="container" id="questions">
                 {% for i, question in enumerate(questions) %}
                     <div class="mb-3">
