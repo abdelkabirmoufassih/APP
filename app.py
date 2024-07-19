@@ -312,14 +312,69 @@ def submit_1(language):
     session['user_id'] = user_id
     return redirect(url_for('quiz', language=language))
 
+
+
+
+
+def get_questions_and_options(language):
+    conn = sqlite3.connect('quiz_results.db')
+    c = conn.cursor()
+
+    # Fetch questions based on language
+    c.execute('''
+    SELECT q.id, qt.title 
+    FROM Questions q
+    JOIN QuestionTrans qt ON q.id = qt.question_id
+    JOIN Quizzes qu ON qu.id = q.quiz_id
+    WHERE qt.language = ?
+    ''', (language,))
+    questions = c.fetchall()
+
+    # Fetch options based on language
+    question_ids = [q[0] for q in questions]
+    if not question_ids:
+        return [], []
+
+    c.execute(f'''
+    SELECT o.question_id, ot.text, o.is_correct 
+    FROM Options o
+    JOIN OptionTrans ot ON o.id = ot.option_id
+    WHERE ot.language = ? AND o.question_id IN ({','.join('?' for _ in question_ids)})
+    ''', [language] + question_ids)
+    options = c.fetchall()
+
+    conn.close()
+
+    # Organize the options by question_id
+    options_dict = {}
+    for question_id, text, is_correct in options:
+        if question_id not in options_dict:
+            options_dict[question_id] = []
+        options_dict[question_id].append((text, is_correct))
+
+    # Combine questions and their respective options
+    quiz_data = []
+    for question_id, question_title in questions:
+        quiz_data.append({
+            'question_id': question_id,
+            'question_title': question_title,
+            'options': options_dict.get(question_id, [])
+        })
+
+    return quiz_data
+
+
+
+
 @app.route('/quiz/<language>', methods=['POST','GET'])
 def quiz(language):
+    quiz_data = get_questions_and_options(language)
     if language == "en":
-        return render_template('quiz_en.html', questions=questions[language], enumerate=enumerate)
+        return render_template('quiz_en.html', questions=quiz_data, enumerate=enumerate)
     elif language == "fr":
-        return render_template('quiz_fr.html',questions=questions[language], enumerate=enumerate)
+        return render_template('quiz_fr.html',questions=quiz_data, enumerate=enumerate)
     elif language == "ar":
-        return render_template('quiz_ar.html', questions=questions[language], enumerate=enumerate)
+        return render_template('quiz_ar.html', questions=quiz_data, enumerate=enumerate)
     else: 
         return("language not supported",404)
     
