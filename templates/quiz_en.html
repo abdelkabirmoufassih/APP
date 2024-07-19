@@ -1,39 +1,66 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Quiz</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style-Quiz.css') }}">
-    <link rel="icon" href="logo-azura.svg">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='style-Quiz.css') }}"
+    />
+    <link rel="icon" href="logo-azura.svg" />
+  </head>
+  <body>
     <div class="jumbotron text-center">
-        <img src="{{ url_for('static', filename='logo-azura.svg') }}" alt="Top Right Photo" class="float-right" id="logo">
-        <h1 style="text-align: center;">Employee Training</h1>
+      <img
+        src="{{ url_for('static', filename='logo-azura.svg') }}"
+        alt="Top Right Photo"
+        class="float-right"
+        id="logo"
+      />
+      <h1 style="text-align: center">Employee Training</h1>
     </div>
 
     <div class="container mt-5">
-        <h4 style="margin-bottom: 5%; text-align: center; font-family: -webkit-body;color: snow;">Please enter your personal information and check the answers</h4>
-        <form action="/submit-2" method="post" class="form-container border-form">
-            <input type="hidden" name="language" value="en">
-            <div class="container" id="questions">
-                {% for i, question in enumerate(questions) %}
-                    <div class="mb-3">
-                        <p><strong>{{ question.question_title }}</strong></p>
-                        {% for option in question.options %}
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="question_{{ question.question_id }}" value="{{ option.text }}">
-                                <label class="form-check-label">
-                                    {{ option.text }}
-                                </label>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
+      <h4
+        style="
+          margin-bottom: 5%;
+          text-align: center;
+          font-family: -webkit-body;
+          color: snow;
+        "
+      >
+        Please enter your personal information and check the answers
+      </h4>
+      <form
+        action="/submit_quiz/{{ quiz_id }}"
+        method="post"
+        class="form-container border-form"
+      >
+        <div class="container" id="questions">
+          {% for i, question in enumerate(questions) %}
+          <div class="mb-3">
+            <p><strong>{{ question.question_title }}</strong></p>
+            {% for option in question.options %}
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                name="question_{{ question.question_id }}"
+                value="{{ option.option_id }}"
+              />
+              <label class="form-check-label"> {{ option.text }} </label>
             </div>
-            <button type="submit" class="submit-button">Submit</button>
-        </form>
+            {% endfor %}
+          </div>
+          {% endfor %}
+        </div>
+        <button type="submit" class="submit-button">Send</button>
+      </form>
     </div>
-    <div style="height: 50px;"></div> 
-</body>
+    <div style="height: 50px"></div>
+  </body>
 </html>

@@ -1,29 +1,45 @@
 <!DOCTYPE html>
 <html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style-Finish.css') }}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='style-Finish.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
     <title>شكرًا</title>
-    <link rel="icon" href="logo-azura.svg">
+    <link rel="icon" href="logo-azura.svg" />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
-        body{
-            font-family: Tajawal;
-        }
+      @import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap");
+      body {
+        font-family: Tajawal;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container-fluid centered-jumbotron">
-        <div class="jumbotron text-center w-100" style="background-color: transparent; color:snow;">
-            <h1 class="display-3" style="margin-bottom: 3%;">! شكرًا لك </h1>
-            {% if success_percentage < 25 %}
-                <p class="lead"><strong style="color: red;font-size:larger;">للأسف،</strong>&nbsp;لقد فشلت في التدريب</p>
-            {% else %}
-                <p class="lead"><strong style="color: green; font-size: larger;">تهانينا،</strong>&nbsp;لقد نجحت في التدريب</p>
-            {% endif %}
-        </div>
+      <div
+        class="jumbotron text-center w-100"
+        style="background-color: transparent; color: snow"
+      >
+        <h1 class="display-3" style="margin-bottom: 3%">! شكرًا لك</h1>
+        {%if status == "Failed" %}
+        <p class="lead">
+          <strong style="color: red; font-size: larger">للأسف،</strong>&nbsp;لقد
+          فشلت في التدريب
+        </p>
+        {%else%}
+        <p class="lead">
+          <strong style="color: green; font-size: larger">تهانينا،</strong
+          >&nbsp;لقد نجحت في التدريب
+        </p>
+        {% endif %}
+      </div>
     </div>
-</body>
+  </body>
 </html>
