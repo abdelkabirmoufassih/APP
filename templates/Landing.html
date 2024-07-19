@@ -30,13 +30,14 @@
     <div class="showcase-text">
           <h1>Fromation d'Employée</h1>
           <p>Bienvenue au questionnaire de formation des employés. Pour continuer, veuillez sélectionner la langue de votre formation.</p>
-          <form action="/information" method="POST">
-          <div class="btn-group" role="group" aria-label="Language selection">
-              <button type="submit" class="btn btn-primary" name="language" value="en">English</button>
-              <button type="submit" class="btn btn-secondary" name="language" value="fr">Francais</button>
-              <button type="submit" class="btn btn-secondary" name="language" value="ar">العربية</button>
-          </div>
-      </form>
+          <form action="/information" method="GET">
+            <div class="btn-group" role="group" aria-label="Language selection">
+                <a href="/information/en" class="btn btn-primary">English</a>
+                <a href="/information/fr" class="btn btn-secondary">Francais</a>
+                <a href="/information/ar" class="btn btn-secondary">العربية</a>
+            </div>
+        </form>
+        
    </div>
  </section>
  <section class="new-section">

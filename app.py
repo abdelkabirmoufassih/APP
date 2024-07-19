@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request,redirect
+from flask import Flask, render_template, request,redirect, url_for
 import sqlite3
 import pandas as pd
 import plotly.express as px
@@ -267,9 +267,8 @@ questions = {
 def home():
     return render_template('landing.html')
 
-@app.route('/information', methods=['POST'])
-def information():
-    language= request.form['language']
+@app.route('/information/<language>', methods=['GET'])
+def information(language):
     if language == "en":
         return render_template('information_en.html')
     elif language == "fr":
@@ -279,8 +278,8 @@ def information():
     else: 
         return("language not supported",404)
 
-@app.route('/submit-1', methods=['POST'])
-def submit_1():
+@app.route('/<language>/user', methods=['POST', 'GET'])
+def submit_1(language):
     
     emp_id = request.form.get('emp_id')
     cin = request.form.get('cin')
@@ -288,10 +287,7 @@ def submit_1():
     last_name = request.form.get('last_name')
     service = request.form.get('service')  
     site = request.form.get('site')
-    language=request.form.get('language')
 
-
-    
     conn = sqlite3.connect('quiz_results.db')
     c = conn.cursor()
     c.execute('''
@@ -313,11 +309,10 @@ def submit_1():
     conn.commit()
     conn.close()
 
-    return redirect('/quiz')  
+    return redirect(url_for('quiz', language=language))
 
-@app.route('/quiz', methods=['POST'])
-def quiz():
-    language= request.form['language']
+@app.route('/quiz/<language>', methods=['POST','GET'])
+def quiz(language):
     if language == "en":
         return render_template('quiz_en.html', questions=questions[language], enumerate=enumerate)
     elif language == "fr":
