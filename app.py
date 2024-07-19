@@ -315,7 +315,7 @@ def submit_1():
 
     return redirect('/quiz')  
 
-@app.route('/quiz', methods=['POST'])
+@app.route('/quiz', methods=['POST','GET'])
 def quiz():
     language= request.form['language']
     if language == "en":
