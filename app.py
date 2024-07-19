@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request,redirect, url_for
+from flask import Flask, render_template, request,redirect, url_for,session
 import sqlite3
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 
 questions = {
     "fr":[{
@@ -305,10 +306,10 @@ def submit_1(language):
     INSERT INTO employee_info (emp_id, cin, first_name, last_name, service, site)
     VALUES (?, ?, ?, ?, ?, ?)
     ''', (emp_id, cin, first_name, last_name, service, site))
-
+    user_id = c.lastrowid
     conn.commit()
     conn.close()
-
+    session['user_id'] = user_id
     return redirect(url_for('quiz', language=language))
 
 @app.route('/quiz/<language>', methods=['POST','GET'])
@@ -324,6 +325,8 @@ def quiz(language):
     
 @app.route('/submit-2', methods=['POST'])
 def submit_2():
+
+    user_id = session['user_id']
     total_correct = 0
     total_wrong = 0
     language=request.form["language"]
