@@ -610,6 +610,47 @@ def view_results():
     conn.close()
     return render_template('view_results.html', results=rows)
 
+
+
+
+
+
+@app.route('/admin/create_quiz', methods=['GET', 'POST'])
+def create_quiz():
+    if request.method == 'POST':
+        # Get quiz data
+        title = request.form['title']
+        language = request.form['language']
+        
+        # Insert quiz into database
+        conn = sqlite3.connect('quiz_results.db')
+        c = conn.cursor()
+        c.execute('INSERT INTO quizzes (title, language) VALUES (?, ?)', (title, language))
+        quiz_id = c.lastrowid
+        
+        # Insert questions and options
+        questions = request.form.getlist('question_title')
+        for i, question_title in enumerate(questions):
+            c.execute('INSERT INTO questions (quiz_id, title) VALUES (?, ?)', (quiz_id, question_title))
+            question_id = c.lastrowid
+            
+            options = request.form.getlist(f'options_{i}')
+            correct_options = request.form.getlist(f'correct_{i}')
+            for option_text in options:
+                is_correct = 1 if option_text in correct_options else 0
+                c.execute('INSERT INTO options (question_id, text, is_correct) VALUES (?, ?, ?)', (question_id, option_text, is_correct))
+        
+        conn.commit()
+        conn.close()
+        return redirect(url_for('create_quiz'))
+    
+    return render_template('admin_create_quiz.html')
+
+
+
+
+
+
 @app.route('/clear_all')
 def clear_all():
     session.clear()  # Clear all session data
