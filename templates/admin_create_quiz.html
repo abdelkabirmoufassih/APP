@@ -13,7 +13,7 @@
   <body>
     <div class="container mt-5">
       <h1>Create a New Quiz</h1>
-      <form method="post">
+      <form id="quiz-form" method="post">
         <div class="mb-3">
           <label for="title" class="form-label">Quiz Title</label>
           <input
@@ -25,30 +25,56 @@
           />
         </div>
         <div class="mb-3">
-          <label for="language" class="form-label">Language</label>
+          <label for="language" class="form-label">Default Language</label>
           <select class="form-select" id="language" name="language" required>
             <option value="en">English</option>
             <option value="fr">French</option>
             <option value="ar">Arabic</option>
           </select>
         </div>
-
         <div id="questions-container">
           <div class="question-block mb-3">
             <label class="form-label">Question 1</label>
             <input
               type="text"
               class="form-control mb-2"
-              name="question_title"
+              name="question_text_1"
               placeholder="Question Title"
               required
             />
+            <div class="form-group">
+              <label for="question_text_1_es">Spanish Translation:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="question_text_1_es"
+                name="question_text_1_es"
+              />
+            </div>
+            <div class="form-group">
+              <label for="question_text_1_fr">French Translation:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="question_text_1_fr"
+                name="question_text_1_fr"
+              />
+            </div>
+            <div class="form-group">
+              <label for="question_text_1_ar">Arabic Translation:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="question_text_1_ar"
+                name="question_text_1_ar"
+              />
+            </div>
             <div class="options-container mb-2">
               <div class="option-block mb-2">
                 <input
                   type="text"
                   class="form-control"
-                  name="options_0"
+                  name="option_text_1_1"
                   placeholder="Option 1"
                   required
                 />
@@ -56,10 +82,82 @@
                   <input
                     class="form-check-input"
                     type="checkbox"
-                    name="correct_0"
+                    name="correct_1_1"
                     value="Option 1"
                   />
                   <label class="form-check-label">Correct Option</label>
+                </div>
+                <div class="form-group">
+                  <label for="option_text_1_1_es">Spanish Translation:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="option_text_1_1_es"
+                    name="option_text_1_1_es"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="option_text_1_1_fr">French Translation:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="option_text_1_1_fr"
+                    name="option_text_1_1_fr"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="option_text_1_1_ar">Arabic Translation:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="option_text_1_1_ar"
+                    name="option_text_1_1_ar"
+                  />
+                </div>
+              </div>
+              <div class="option-block mb-2">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="option_text_1_2"
+                  placeholder="Option 2"
+                  required
+                />
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="correct_1_2"
+                    value="Option 2"
+                  />
+                  <label class="form-check-label">Correct Option</label>
+                </div>
+                <div class="form-group">
+                  <label for="option_text_1_2_es">Spanish Translation:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="option_text_1_2_es"
+                    name="option_text_1_2_es"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="option_text_1_2_fr">French Translation:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="option_text_1_2_fr"
+                    name="option_text_1_2_fr"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="option_text_1_2_ar">Arabic Translation:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="option_text_1_2_ar"
+                    name="option_text_1_2_ar"
+                  />
                 </div>
               </div>
             </div>
@@ -68,6 +166,9 @@
             </button>
             <button type="button" class="btn btn-danger btn-sm remove-option">
               Remove Option
+            </button>
+            <button type="button" class="btn btn-danger btn-sm remove-question">
+              Remove Question
             </button>
           </div>
         </div>
@@ -80,7 +181,7 @@
 
     <script>
       let questionCount = 1;
-      let optionCount = 1;
+      let optionCount = 2;
 
       document
         .getElementById("add-question")
@@ -89,24 +190,125 @@
           const questionBlock = document.createElement("div");
           questionBlock.className = "question-block mb-3";
           questionBlock.innerHTML = `
-                  <label class="form-label">Question ${
-                    questionCount + 1
-                  }</label>
-                  <input type="text" class="form-control mb-2" name="question_title" placeholder="Question Title" required>
-                  <div class="options-container mb-2">
-                      <div class="option-block mb-2">
-                          <input type="text" class="form-control" name="options_${questionCount}" placeholder="Option 1" required>
-                          <div class="form-check">
-                              <input class="form-check-input" type="checkbox" name="correct_${questionCount}" value="Option 1">
-                              <label class="form-check-label">Correct Option</label>
-                          </div>
-                      </div>
-                  </div>
-                  <button type="button" class="btn btn-secondary btn-sm add-option">Add Option</button>
-                  <button type="button" class="btn btn-danger btn-sm remove-option">Remove Option</button>
-              `;
+                <label class="form-label">Question ${questionCount + 1}</label>
+                <input type="text" class="form-control mb-2" name="question_text_${
+                  questionCount + 1
+                }" placeholder="Question Title" required>
+                <div class="form-group">
+                    <label for="question_text_${
+                      questionCount + 1
+                    }_es">Spanish Translation:</label>
+                    <input type="text" class="form-control" id="question_text_${
+                      questionCount + 1
+                    }_es" name="question_text_${questionCount + 1}_es" />
+                </div>
+                <div class="form-group">
+                    <label for="question_text_${
+                      questionCount + 1
+                    }_fr">French Translation:</label>
+                    <input type="text" class="form-control" id="question_text_${
+                      questionCount + 1
+                    }_fr" name="question_text_${questionCount + 1}_fr" />
+                </div>
+                <div class="form-group">
+                    <label for="question_text_${
+                      questionCount + 1
+                    }_ar">Arabic Translation:</label>
+                    <input type="text" class="form-control" id="question_text_${
+                      questionCount + 1
+                    }_ar" name="question_text_${questionCount + 1}_ar" />
+                </div>
+                <div class="options-container mb-2">
+                    <div class="option-block mb-2">
+                        <input type="text" class="form-control" name="option_text_${
+                          questionCount + 1
+                        }_1" placeholder="Option 1" required>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="correct_${
+                              questionCount + 1
+                            }_1" value="Option 1">
+                            <label class="form-check-label">Correct Option</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="option_text_${
+                              questionCount + 1
+                            }_1_es">Spanish Translation:</label>
+                            <input type="text" class="form-control" id="option_text_${
+                              questionCount + 1
+                            }_1_es" name="option_text_${
+            questionCount + 1
+          }_1_es" />
+                        </div>
+                        <div class="form-group">
+                            <label for="option_text_${
+                              questionCount + 1
+                            }_1_fr">French Translation:</label>
+                            <input type="text" class="form-control" id="option_text_${
+                              questionCount + 1
+                            }_1_fr" name="option_text_${
+            questionCount + 1
+          }_1_fr" />
+                        </div>
+                        <div class="form-group">
+                            <label for="option_text_${
+                              questionCount + 1
+                            }_1_ar">Arabic Translation:</label>
+                            <input type="text" class="form-control" id="option_text_${
+                              questionCount + 1
+                            }_1_ar" name="option_text_${
+            questionCount + 1
+          }_1_ar" />
+                        </div>
+                    </div>
+                    <div class="option-block mb-2">
+                        <input type="text" class="form-control" name="option_text_${
+                          questionCount + 1
+                        }_2" placeholder="Option 2" required>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="correct_${
+                              questionCount + 1
+                            }_2" value="Option 2">
+                            <label class="form-check-label">Correct Option</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="option_text_${
+                              questionCount + 1
+                            }_2_es">Spanish Translation:</label>
+                            <input type="text" class="form-control" id="option_text_${
+                              questionCount + 1
+                            }_2_es" name="option_text_${
+            questionCount + 1
+          }_2_es" />
+                        </div>
+                        <div class="form-group">
+                            <label for="option_text_${
+                              questionCount + 1
+                            }_2_fr">French Translation:</label>
+                            <input type="text" class="form-control" id="option_text_${
+                              questionCount + 1
+                            }_2_fr" name="option_text_${
+            questionCount + 1
+          }_2_fr" />
+                        </div>
+                        <div class="form-group">
+                            <label for="option_text_${
+                              questionCount + 1
+                            }_2_ar">Arabic Translation:</label>
+                            <input type="text" class="form-control" id="option_text_${
+                              questionCount + 1
+                            }_2_ar" name="option_text_${
+            questionCount + 1
+          }_2_ar" />
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm add-option">Add Option</button>
+                <button type="button" class="btn btn-danger btn-sm remove-option">Remove Option</button>
+                <button type="button" class="btn btn-danger btn-sm remove-question">Remove Question</button>
+            `;
           container.appendChild(questionBlock);
           questionCount++;
+          optionCount = 1; // Reset option count for new question
         });
 
       document
@@ -117,24 +319,77 @@
             const optionBlock = document.createElement("div");
             optionBlock.className = "option-block mb-2";
             optionBlock.innerHTML = `
-                      <input type="text" class="form-control" name="options_${optionCount}" placeholder="Option ${
+                    <input type="text" class="form-control" name="option_text_${questionCount}_${optionCount}" placeholder="Option ${
               optionCount + 1
             }" required>
-                      <div class="form-check">
-                          <input class="form-check-input" type="checkbox" name="correct_${optionCount}" value="Option ${
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="correct_${questionCount}_${optionCount}" value="Option ${
               optionCount + 1
             }">
-                          <label class="form-check-label">Correct Option</label>
-                      </div>
-                  `;
+                        <label class="form-check-label">Correct Option</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="option_text_${questionCount}_${optionCount}_es">Spanish Translation:</label>
+                        <input type="text" class="form-control" id="option_text_${questionCount}_${optionCount}_es" name="option_text_${questionCount}_${optionCount}_es" />
+                    </div>
+                    <div class="form-group">
+                        <label for="option_text_${questionCount}_${optionCount}_fr">French Translation:</label>
+                        <input type="text" class="form-control" id="option_text_${questionCount}_${optionCount}_fr" name="option_text_${questionCount}_${optionCount}_fr" />
+                    </div>
+                    <div class="form-group">
+                        <label for="option_text_${questionCount}_${optionCount}_ar">Arabic Translation:</label>
+                        <input type="text" class="form-control" id="option_text_${questionCount}_${optionCount}_ar" name="option_text_${questionCount}_${optionCount}_ar" />
+                    </div>
+                `;
             optionContainer.appendChild(optionBlock);
             optionCount++;
           }
 
           if (event.target.classList.contains("remove-option")) {
             const optionContainer = event.target.previousElementSibling;
-            if (optionContainer.children.length > 1) {
+            if (optionContainer.children.length > 2) {
+              // Ensure at least two options
               optionContainer.removeChild(optionContainer.lastElementChild);
+            }
+          }
+
+          if (event.target.classList.contains("remove-question")) {
+            const questionContainer = event.target.parentElement;
+            if (
+              document.getElementById("questions-container").children.length > 1
+            ) {
+              // Ensure at least one question
+              questionContainer.remove();
+            }
+          }
+        });
+
+      document
+        .getElementById("quiz-form")
+        .addEventListener("submit", function (event) {
+          const questionBlocks = document.querySelectorAll(".question-block");
+          if (questionBlocks.length < 1) {
+            event.preventDefault();
+            alert("Please add at least one question.");
+            return;
+          }
+
+          for (const questionBlock of questionBlocks) {
+            const optionBlocks =
+              questionBlock.querySelectorAll(".option-block");
+            if (optionBlocks.length < 2) {
+              event.preventDefault();
+              alert("Each question must have at least two options.");
+              return;
+            }
+
+            const correctOptions = questionBlock.querySelectorAll(
+              ".form-check-input:checked"
+            );
+            if (correctOptions.length < 1) {
+              event.preventDefault();
+              alert("Each question must have at least one correct option.");
+              return;
             }
           }
         });

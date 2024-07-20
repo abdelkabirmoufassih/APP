@@ -52,56 +52,32 @@ def initialize_db():
     )
     ''')
 
-    # Insert sample data
+
+    # Create Attempts table
     c.execute('''
-    INSERT INTO Quizzes (title, language) VALUES
-    ('General Knowledge', 'English'),
-    ('Science', 'English')
+    CREATE TABLE IF NOT EXISTS Attempts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        quiz_id INTEGER,
+        score INTEGER,
+        status TEXT,
+        time TIMESTAMP
+    )
     ''')
 
+    # Create Answers table
     c.execute('''
-    INSERT INTO Questions (quiz_id, title) VALUES
-    (1, 'What is the capital of France?'),
-    (1, 'What is the largest planet in our solar system?')
+    CREATE TABLE IF NOT EXISTS Answers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        attempt_id INTEGER,
+        question_id INTEGER,
+        option_id INTEGER,
+        is_correct BOOLEAN,
+        FOREIGN KEY (attempt_id) REFERENCES Attempts (id),
+        FOREIGN KEY (question_id) REFERENCES Questions (id),
+        FOREIGN KEY (option_id) REFERENCES Options (id)
+    )
     ''')
-
-    c.execute('''
-    INSERT INTO QuestionTrans (question_id, language, title) VALUES
-    (1, 'French', 'Quelle est la capitale de la France?'),
-    (2, 'French', 'Quelle est la plus grande planète de notre système solaire?')
-    ''')
-
-    c.execute('''
-    INSERT INTO Options (question_id, text, is_correct) VALUES
-    (1, 'Paris', 1),
-    (1, 'London', 0),
-    (2, 'Jupiter', 1),
-    (2, 'Saturn', 0)
-    ''')
-
-    c.execute('''
-    INSERT INTO OptionTrans (option_id, language, text) VALUES
-    (1, 'French', 'Paris'),
-    (2, 'French', 'Londres'),
-    (3, 'French', 'Jupiter'),
-    (4, 'French', 'Saturne')
-    ''')
-    # Insert Arabic question translations
-    c.execute('''
-    INSERT INTO QuestionTrans (question_id, language, title) VALUES
-    (1, 'ar', 'ما هي عاصمة فرنسا?'),
-    (2, 'ar', 'ما هو أكبر كوكب في نظامنا الشمسي?')
-    ''')
-
-    # Insert Arabic options
-    c.execute('''
-    INSERT INTO OptionTrans (option_id, language, text) VALUES
-    (1, 'ar', 'باريس'),
-    (2, 'ar', 'لندن'),
-    (3, 'ar', 'المشتري'),
-    (4, 'ar', 'زحل')
-    ''')
-
     conn.commit()
     conn.close()
 
