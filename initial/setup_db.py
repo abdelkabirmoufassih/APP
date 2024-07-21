@@ -1,15 +1,31 @@
 import sqlite3
 
 def initialize_db():
-    conn = sqlite3.connect('quiz_results.db')
+    conn = sqlite3.connect('database.db')
     c = conn.cursor()
 
     # Create tables
+
+
+    c.execute('''
+    CREATE TABLE IF NOT EXISTS "Users" (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        cin TEXT UNIQUE,  
+        emp_id TEXT UNIQUE,
+        first_name TEXT,
+        last_name TEXT,
+        service TEXT,
+        site TEXT,
+        password_hash TEXT  
+    )
+    ''')
+
     c.execute('''
     CREATE TABLE IF NOT EXISTS Quizzes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT,
-        language TEXT
+        language TEXT,
+        passing_grade INTEGER DEFAULT 0
     )
     ''')
 
@@ -61,7 +77,8 @@ def initialize_db():
         quiz_id INTEGER,
         score INTEGER,
         status TEXT,
-        time TIMESTAMP
+        time TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES Users (id)
     )
     ''')
 

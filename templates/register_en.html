@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>معلومات</title>
+    <title>Information</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -12,24 +12,16 @@
       href="{{ url_for('static', filename='style-Information.css') }}"
     />
     <link rel="icon" href="logo-azura.svg" />
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap");
-      body {
-        direction: rtl;
-        text-align: right;
-        font-family: Tajawal;
-      }
-    </style>
   </head>
   <body>
     <div class="jumbotron text-center">
       <img
         src="{{ url_for('static', filename='logo-azura.svg') }}"
-        alt="شعار"
+        alt="Logo"
         class="float-right"
         id="logo"
       />
-      <h1 style="text-align: center">تكوين الموظف</h1>
+      <h1 style="text-align: center">Employee Training</h1>
     </div>
 
     <div class="container mt-5">
@@ -41,13 +33,13 @@
           color: snow;
         "
       >
-        يرجى إدخال معلوماتك الشخصية
+        Please enter your personal information
       </h4>
-      <form action="/ar/user" method="POST" class="form-container border-form">
-        <input type="hidden" name="language" value="ar" />
+      <form action="/register" method="post" class="form-container border-form">
+        <input type="hidden" name="language" value="en" />
         <div class="form-row">
           <div class="form-group col-md-6">
-            <label for="emp_id">رقم الموظف:</label>
+            <label for="emp_id">Employee ID:</label>
             <input
               type="text"
               class="form-control"
@@ -57,7 +49,7 @@
             />
           </div>
           <div class="form-group col-md-6">
-            <label for="cin">رقم البطاقة الشخصية:</label>
+            <label for="cin">ID Number:</label>
             <input
               type="text"
               class="form-control"
@@ -69,7 +61,7 @@
         </div>
         <div class="form-row">
           <div class="form-group col-md-6">
-            <label for="first_name">الاسم الأول:</label>
+            <label for="first_name">First Name:</label>
             <input
               type="text"
               class="form-control"
@@ -79,7 +71,7 @@
             />
           </div>
           <div class="form-group col-md-6">
-            <label for="last_name">اسم العائلة:</label>
+            <label for="last_name">Last Name:</label>
             <input
               type="text"
               class="form-control"
@@ -91,7 +83,7 @@
         </div>
         <div class="form-row">
           <div class="form-group col-md-6">
-            <label for="service">القسم:</label>
+            <label for="service">Department:</label>
             <input
               type="text"
               class="form-control"
@@ -101,7 +93,7 @@
             />
           </div>
           <div class="form-group col-md-6">
-            <label for="site">الموقع:</label>
+            <label for="site">Site:</label>
             <input
               type="text"
               class="form-control"
@@ -111,8 +103,9 @@
             />
           </div>
         </div>
+
         <button type="submit" class="btn btn-primary submit-button">
-          تأكيد
+          Submit
         </button>
       </form>
     </div>

@@ -21,6 +21,15 @@
 				<li>
 					<a href="https://www.azura-group.com/contact">Contact</a>
 				</li>
+        {% if current_user.is_authenticated %}
+          <li>
+            <a href="{{ url_for('auth.logout') }}">Logout</a>
+          </li>
+        {% else %}
+          <li>
+            <a href="{{ url_for('auth.login') }}">Login</a>
+          </li>
+        {% endif %}
 			</ul>
 		</nav>
 		</div>
@@ -30,15 +39,14 @@
     <div class="showcase-text">
           <h1>Fromation d'Employée</h1>
           <p>Bienvenue au questionnaire de formation des employés. Pour continuer, veuillez sélectionner la langue de votre formation.</p>
-          <form action="/information" method="GET">
             <div class="btn-group" role="group" aria-label="Language selection">
-                <a href="/information/en" class="btn btn-primary">English</a>
-                <a href="/information/fr" class="btn btn-secondary">Francais</a>
-                <a href="/information/ar" class="btn btn-secondary">العربية</a>
+                <a href="/select_language/en" class="btn btn-primary">English</a>
+                <a href="/select_language/fr" class="btn btn-secondary">Francais</a>
+                <a href="/select_language/ar" class="btn btn-secondary">العربية</a>
             </div>
-        </form>
         
    </div>
+
  </section>
  <section class="new-section">
     <div class="container">

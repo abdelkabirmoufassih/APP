@@ -1,68 +1,69 @@
-from flask import Flask, render_template, request,redirect, url_for,session
-from datetime import datetime, timedelta
-import sqlite3
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-import pytz
+import logging
+from flask import Flask, render_template, redirect, url_for, session
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+from models import db, User
+from auth import auth_bp
+
+# Configure logging
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SECRET_KEY'] = 'your_secret_key'
 
-#Client routes
+# Initialize Flask extensions with the app
+db.init_app(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'auth.login'
+
+# Register the Blueprint
+app.register_blueprint(auth_bp, url_prefix='/auth')
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+def create_tables():
+    with app.app_context():
+        print("Creating database tables...")
+        db.create_all()
+        print("Tables created successfully.")
 
 @app.route('/')
 def home():
     return render_template('landing.html')
 
-@app.route('/information/<language>', methods=['GET'])
-def information(language):
+@app.route('/select_language/<language>', methods=['GET'])
+def select_language(language):
     session['language'] = language
-    if language == "en":
-        return render_template('information_en.html')
-    elif language == "fr":
-        return render_template('information_fr.html')
-    elif language == "ar":
-        return render_template('information_ar.html')
-    else: 
-        return("language not supported",404)
+    print(session["language"])
+    return render_template(f'register_{session["language"]}.html')
 
-@app.route('/<language>/user', methods=['POST', 'GET'])
-def submit_1(language):
+
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
+
+
+
+if __name__ == '__main__':
+    # Delete existing database file
+    import os
+    if os.path.exists('database.db'):
+        os.remove('database.db')
     
-    emp_id = request.form.get('emp_id')
-    cin = request.form.get('cin')
-    first_name = request.form.get('first_name')
-    last_name = request.form.get('last_name')
-    service = request.form.get('service')  
-    site = request.form.get('site')
+    create_tables()  # Ensure tables are created before running the app
+    app.run(debug=True)
 
-    conn = sqlite3.connect('quiz_results.db')
-    c = conn.cursor()
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS employee_info (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        emp_id TEXT,
-        cin TEXT,
-        first_name TEXT,
-        last_name TEXT,
-        service TEXT,
-        site TEXT
-    )
-    ''')
-    c.execute('''
-    INSERT INTO employee_info (emp_id, cin, first_name, last_name, service, site)
-    VALUES (?, ?, ?, ?, ?, ?)
-    ''', (emp_id, cin, first_name, last_name, service, site))
-    user_id = c.lastrowid
-    conn.commit()
-    conn.close()
-    session['user_id'] = user_id
-    return redirect(url_for('quizzes'))
+
+
+""" 
 
 def get_questions_and_options(quiz_id, language):
 
-    conn = sqlite3.connect('quiz_results.db')
+    conn = sqlite3.connect('database.db')
     c = conn.cursor()
 
     if language == 'en':
@@ -137,7 +138,7 @@ def get_questions_and_options(quiz_id, language):
 
 @app.route('/quizzes')
 def quizzes():
-    conn = sqlite3.connect('quiz_results.db')
+    conn = sqlite3.connect('database.db')
     c = conn.cursor()
     try:
         # Fetch all quizzes
@@ -169,7 +170,7 @@ def submit_quiz(quiz_id):
     start_time = datetime.fromisoformat(session.get('start_time'))
     end_time = datetime.utcnow()
 
-    conn = sqlite3.connect('quiz_results.db')
+    conn = sqlite3.connect('database.db')
     c = conn.cursor()
 
     # Define the passing score threshold (as a percentage)
@@ -290,7 +291,7 @@ def submit_quiz(quiz_id):
 
 @app.route('/results/<int:attempt_id>')
 def results(attempt_id):
-    conn = sqlite3.connect('quiz_results.db')
+    conn = sqlite3.connect('database.db')
     c = conn.cursor()
 
     try:
@@ -334,11 +335,11 @@ def results(attempt_id):
 
         # Fetch quiz title and passing grade
         c.execute('''
-        SELECT title, passing_grade FROM Quizzes WHERE id = ?
+        SELECT title FROM Quizzes WHERE id = ?
         ''', (quiz_id,))
         quiz_info = c.fetchone()
         quiz_title = quiz_info[0]
-        passing_grade = quiz_info[1]
+    
 
         # Return the results to the template
         return render_template(f'finish_{session["language"]}.html', quiz_title=quiz_title, score=score, status=status, time=time, answers=answers)
@@ -351,7 +352,7 @@ def results(attempt_id):
 
 @app.route('/graphs')
 def graph():
-    conn = sqlite3.connect('quiz_results.db')
+    conn = sqlite3.connect('database.db')
     df = pd.read_sql_query("SELECT * from results", conn)
     conn.close()
     fig_individual = px.bar(df, x=df.index, y='success_percentage', title='Individual Success Percentage')
@@ -378,7 +379,7 @@ def graph():
 
 @app.route('/export')
 def export():
-    conn = sqlite3.connect('quiz_results.db')
+    conn = sqlite3.connect('database.db')
     df = pd.read_sql_query("SELECT * FROM results", conn)
     df.to_csv('results.csv', index=False)
     conn.close()
@@ -386,7 +387,7 @@ def export():
 
 @app.route('/view_results')
 def view_results():
-    conn = sqlite3.connect('quiz_results.db')
+    conn = sqlite3.connect('database.db')
     c = conn.cursor()
     c.execute('SELECT * FROM results')
     rows = c.fetchall()
@@ -401,7 +402,7 @@ def create_quiz():
         title = request.form['title']
         default_language = request.form['language']
 
-        conn = sqlite3.connect('quiz_results.db')
+        conn = sqlite3.connect('database.db')
         c = conn.cursor()
 
         # Insert the quiz title
@@ -453,4 +454,4 @@ def create_quiz():
 @app.route('/clear_all')
 def clear_all():
     session.clear()  # Clear all session data
-    return render_template('landing.html')
+    return render_template('landing.html') """
