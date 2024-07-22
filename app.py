@@ -2,12 +2,12 @@ import logging
 from flask import Flask, render_template, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from models import db, User
+from models import db, User, Quiz, Question, QuestionTranslation, Option, OptionTranslation, InitializationStatus
 from auth import auth_bp
 
 # Configure logging
-logging.basicConfig()
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+#logging.basicConfig()
+#logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -30,6 +30,68 @@ def create_tables():
         print("Creating database tables...")
         db.create_all()
         print("Tables created successfully.")
+        populate_db()
+
+def populate_db():
+    with app.app_context():
+        status = InitializationStatus.query.first()
+        if status and status.initialized:
+            print("Database has already been populated.")
+            return
+        # Create quizzes
+        quiz1 = Quiz(title="Quiz 1", language="en")
+        quiz2 = Quiz(title="Quiz 2", language="en")
+        
+        db.session.add_all([quiz1, quiz2])
+        db.session.commit()
+        
+        quizzes = [quiz1, quiz2]
+
+        for quiz in quizzes:
+            for i in range(10):  # Create 10 questions per quiz
+                question = Question(quiz_id=quiz.id, title=f"Question {i+1} for {quiz.title}")
+                db.session.add(question)
+                db.session.commit()
+                
+                # Create translations for each question
+                question_translation_fr = QuestionTranslation(question_id=question.id, language="fr", title=f"Question {i+1} en français pour {quiz.title}")
+                question_translation_ar = QuestionTranslation(question_id=question.id, language="ar", title=f"السؤال {i+1} بالعربية لـ {quiz.title}")
+                db.session.add_all([question_translation_fr, question_translation_ar])
+                db.session.commit()
+                
+                # Create options for each question
+                for j in range(4):  # Assuming each question has 4 options
+                    option = Option(question_id=question.id, text=f"Option {j+1}", is_correct=(j == 0))
+                    db.session.add(option)
+                    db.session.commit()
+                    
+                    # Create translations for each option
+                    option_translation_fr = OptionTranslation(option_id=option.id, language="fr", text=f"Option {j+1} en français")
+                    option_translation_ar = OptionTranslation(option_id=option.id, language="ar", text=f"الخيار {j+1} بالعربية")
+                    db.session.add_all([option_translation_fr, option_translation_ar])
+        
+        if not status:
+            status = InitializationStatus(initialized=True)
+            db.session.add(status)
+        else:
+            status.initialized = True
+        
+        db.session.commit()
+        print("Database populated successfully.")
+        
+        db.session.commit()
+        print('database populated successwdjkghudhgoui')
+
+
+
+
+
+
+
+
+
+
+
 
 @app.route('/')
 def home():
@@ -59,111 +121,8 @@ if __name__ == '__main__':
 
 
 
-""" 
 
-def get_questions_and_options(quiz_id, language):
-
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-
-    if language == 'en':
-        # Fetch questions and options directly for English
-        query_questions = '''
-        SELECT q.id, q.title 
-        FROM Questions q
-        WHERE q.quiz_id = ?
-        '''
-        c.execute(query_questions, (quiz_id,))
-        questions = c.fetchall()
-        
-        question_ids = [q[0] for q in questions]
-        if not question_ids:
-            print("No questions found.")
-            return []
-
-        query_options = f'''
-        SELECT o.id, o.question_id, o.text, o.is_correct 
-        FROM Options o
-        WHERE o.question_id IN ({','.join('?' for _ in question_ids)})
-        '''
-        c.execute(query_options, question_ids)
-        options = c.fetchall()
-    else:
-        # Fetch questions with translations for other languages
-        query_questions = '''
-        SELECT q.id, qt.title 
-        FROM Questions q
-        JOIN QuestionTrans qt ON q.id = qt.question_id
-        WHERE q.quiz_id = ? AND qt.language = ?
-        '''
-        c.execute(query_questions, (quiz_id, language))
-        questions = c.fetchall()
-        # Fetch options with translations
-        question_ids = [q[0] for q in questions]
-        if not question_ids:
-            print("No questions found.")
-            return []
-
-        query_options = f'''
-        SELECT o.id, o.question_id, ot.text, o.is_correct 
-        FROM Options o
-        JOIN OptionTrans ot ON o.id = ot.option_id
-        WHERE ot.language = ? AND o.question_id IN ({','.join('?' for _ in question_ids)})
-        '''
-        c.execute(query_options, [language] + question_ids)
-        options = c.fetchall()
-
-    conn.close()
-
-    # Organize the options by question_id
-    options_dict = {}
-    for option_id, question_id, text, is_correct in options:
-        if question_id not in options_dict:
-            options_dict[question_id] = []
-        options_dict[question_id].append({
-            'text': text,
-            'option_id': option_id,
-            'is_correct': is_correct
-        })
-
-    # Combine questions and their respective options
-    quiz_data = []
-    for question_id, question_title in questions:
-        quiz_data.append({
-            'question_id': question_id,
-            'question_title': question_title,
-            'options': options_dict.get(question_id, [])
-        })
-    return quiz_data
-
-@app.route('/quizzes')
-def quizzes():
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    try:
-        # Fetch all quizzes
-        c.execute('''
-        SELECT id, title FROM Quizzes
-        ''')
-        quizzes = c.fetchall()
-        return render_template('quizzes.html', quizzes=quizzes)
-    except Exception as e:
-        print(f"Error occurred: {e}")
-        return "An error occurred while fetching quizzes", 500
-    finally:
-        conn.close()
-
-@app.route('/quiz/<int:quiz_id>/', methods=['POST','GET'])
-def quiz(quiz_id):
-    language = session['language']
-    if 'start_time' not in session:
-        session['start_time'] = datetime.now(pytz.utc).isoformat()
-    quiz_data = get_questions_and_options(quiz_id, language)
-    print(quiz_data)
-    if language :
-        return render_template(f'quiz_{session["language"]}.html', questions=quiz_data, enumerate=enumerate, quiz_id=quiz_id,start_time=session['start_time'])
-    return("language not supported",404)
-
+"""
 @app.route('/submit_quiz/<int:quiz_id>', methods=['POST'])
 def submit_quiz(quiz_id):
     user_id = session.get('user_id')

@@ -19,26 +19,44 @@ class User(db.Model, UserMixin):
 
 class Quiz(db.Model):
     __tablename__ = 'Quizzes'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     language = db.Column(db.String, nullable=False)
-    questions = db.relationship('Question', back_populates='quiz')
+    questions = db.relationship("Question", back_populates="quiz")
 
 class Question(db.Model):
     __tablename__ = 'Questions'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     quiz_id = db.Column(db.Integer, db.ForeignKey('Quizzes.id'), nullable=False)
     title = db.Column(db.String, nullable=False)
-    quiz = db.relationship('Quiz', back_populates='questions')
-    options = db.relationship('Option', back_populates='question')
+    quiz = db.relationship("Quiz", back_populates="questions")
+    translations = db.relationship("QuestionTranslation", back_populates="question")
+    options = db.relationship("Option", back_populates="question")
+
+class QuestionTranslation(db.Model):
+    __tablename__ = 'QuestionTrans'
+    id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(db.Integer, db.ForeignKey('Questions.id'), nullable=False)
+    language = db.Column(db.String, nullable=False)
+    title = db.Column(db.String, nullable=False)
+    question = db.relationship("Question", back_populates="translations")
 
 class Option(db.Model):
     __tablename__ = 'Options'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     question_id = db.Column(db.Integer, db.ForeignKey('Questions.id'), nullable=False)
     text = db.Column(db.String, nullable=False)
     is_correct = db.Column(db.Boolean, nullable=False)
-    question = db.relationship('Question', back_populates='options')
+    question = db.relationship("Question", back_populates="options")
+    translations = db.relationship("OptionTranslation", back_populates="option")
+
+class OptionTranslation(db.Model):
+    __tablename__ = 'OptionTrans'
+    id = db.Column(db.Integer, primary_key=True)
+    option_id = db.Column(db.Integer, db.ForeignKey('Options.id'), nullable=False)
+    language = db.Column(db.String, nullable=False)
+    text = db.Column(db.String, nullable=False)
+    option = db.relationship("Option", back_populates="translations")
 
 class Attempt(db.Model):
     __tablename__ = 'Attempts'
@@ -56,3 +74,9 @@ class Answer(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('Questions.id'), nullable=False)
     option_id = db.Column(db.Integer, db.ForeignKey('Options.id'), nullable=False)
     is_correct = db.Column(db.Boolean, nullable=False)
+
+class InitializationStatus(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    initialized = db.Column(db.Boolean, default=False)
+
+

@@ -114,21 +114,21 @@
       </p>
       <form
         id="quiz-form"
-        action="/submit_quiz/{{ quiz_id }}"
+        action="{{ url_for('auth.submit_quiz', quiz_id=quiz.id) }}"
         method="post"
         class="form-container border-form"
       >
         <div class="container" id="questions">
-          {% for i, question in enumerate(questions) %}
+          {% for question in quiz.questions %}
           <div class="mb-3">
-            <p><strong>{{ question.question_title }}</strong></p>
+            <p><strong>{{ question.title }}</strong></p>
             {% for option in question.options %}
             <div class="form-check">
               <input
                 class="form-check-input"
                 type="checkbox"
-                name="question_{{ question.question_id }}"
-                value="{{ option.option_id }}"
+                name="question_{{ question.id }}"
+                value="{{ option.id }}"
               />
               <label class="form-check-label"> {{ option.text }} </label>
             </div>
