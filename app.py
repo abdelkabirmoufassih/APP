@@ -16,10 +16,10 @@ app.config['SECRET_KEY'] = 'your_secret_key'
 # Initialize Flask extensions with the app
 db.init_app(app)
 login_manager = LoginManager(app)
-login_manager.login_view = 'auth.login'
+login_manager.login_view = 'login'
 
 # Register the Blueprint
-app.register_blueprint(auth_bp, url_prefix='/auth')
+app.register_blueprint(auth_bp, url_prefix='/')
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -84,15 +84,6 @@ def populate_db():
 
 
 
-
-
-
-
-
-
-
-
-
 @app.route('/')
 def home():
     return render_template('landing.html')
@@ -101,14 +92,7 @@ def home():
 def select_language(language):
     session['language'] = language
     print(session["language"])
-    return render_template(f'register_{session["language"]}.html')
-
-
-@app.route('/login')
-def login_page():
-    return render_template('login.html')
-
-
+    return redirect(url_for('register'))
 
 if __name__ == '__main__':
     # Delete existing database file

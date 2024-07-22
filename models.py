@@ -22,6 +22,7 @@ class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     language = db.Column(db.String, nullable=False)
+    is_active = db.Column(db.Boolean, default=False)  # Add this field
     questions = db.relationship("Question", back_populates="quiz")
 
 class Question(db.Model):

@@ -4,7 +4,7 @@
     align-items: center;
     height: 100vh;
     padding: 0;
-    background: url('T.svg') no-repeat center center/cover;
+    background: url('T.jpg') no-repeat center center/cover;
 }
 .centered-jumbotron {
     display: flex;
