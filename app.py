@@ -1,9 +1,12 @@
 import logging
-from flask import Flask, render_template, redirect, url_for, session
+from flask import Flask, render_template, redirect, url_for, session, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from models import db, User, Quiz, Question, QuestionTranslation, Option, OptionTranslation, InitializationStatus
+from models import db, Admin, User, Quiz, Question, QuestionTranslation, Option, OptionTranslation
 from auth import auth_bp
+from admin import admin_bp
+import click
+from flask.cli import with_appcontext
 
 # Configure logging
 #logging.basicConfig()
@@ -16,84 +19,67 @@ app.config['SECRET_KEY'] = 'your_secret_key'
 # Initialize Flask extensions with the app
 db.init_app(app)
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'auth.login'
 
 # Register the Blueprint
 app.register_blueprint(auth_bp, url_prefix='/')
+# Register the Blueprint with a URL prefix
+app.register_blueprint(admin_bp, url_prefix='/admin')  
+
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    if user_id.startswith('user_'):
+        user_id = user_id.replace('user_', '')
+        return User.query.get(int(user_id))
+    elif user_id.startswith('admin_'):
+        admin_id = user_id.replace('admin_', '')
+        return Admin.query.get(int(admin_id))
+    return None
+
+
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    # Check the URL the user is trying to access
+    if request.path.startswith('/admin/dashboard'):
+        return redirect(url_for('admin.admin_login'))
+    else:
+        return redirect(url_for('auth.login'))
+
 
 def create_tables():
     with app.app_context():
         print("Creating database tables...")
         db.create_all()
         print("Tables created successfully.")
-        populate_db()
-
-def populate_db():
-    with app.app_context():
-        status = InitializationStatus.query.first()
-        if status and status.initialized:
-            print("Database has already been populated.")
-            return
-        # Create quizzes
-        quiz1 = Quiz(title="Quiz 1", language="en")
-        quiz2 = Quiz(title="Quiz 2", language="en")
         
-        db.session.add_all([quiz1, quiz2])
-        db.session.commit()
-        
-        quizzes = [quiz1, quiz2]
-
-        for quiz in quizzes:
-            for i in range(10):  # Create 10 questions per quiz
-                question = Question(quiz_id=quiz.id, title=f"Question {i+1} for {quiz.title}")
-                db.session.add(question)
-                db.session.commit()
-                
-                # Create translations for each question
-                question_translation_fr = QuestionTranslation(question_id=question.id, language="fr", title=f"Question {i+1} en français pour {quiz.title}")
-                question_translation_ar = QuestionTranslation(question_id=question.id, language="ar", title=f"السؤال {i+1} بالعربية لـ {quiz.title}")
-                db.session.add_all([question_translation_fr, question_translation_ar])
-                db.session.commit()
-                
-                # Create options for each question
-                for j in range(4):  # Assuming each question has 4 options
-                    option = Option(question_id=question.id, text=f"Option {j+1}", is_correct=(j == 0))
-                    db.session.add(option)
-                    db.session.commit()
-                    
-                    # Create translations for each option
-                    option_translation_fr = OptionTranslation(option_id=option.id, language="fr", text=f"Option {j+1} en français")
-                    option_translation_ar = OptionTranslation(option_id=option.id, language="ar", text=f"الخيار {j+1} بالعربية")
-                    db.session.add_all([option_translation_fr, option_translation_ar])
-        
-        if not status:
-            status = InitializationStatus(initialized=True)
-            db.session.add(status)
-        else:
-            status.initialized = True
-        
-        db.session.commit()
-        print("Database populated successfully.")
-        
-        db.session.commit()
-        print('database populated successwdjkghudhgoui')
-
-
+@app.before_request
+def set_default_language():
+    # Set default language to 'fr' if not already set
+    if 'language' not in session:
+        session['language'] = 'fr'
 
 @app.route('/')
 def home():
     return render_template('landing.html')
 
+
+@app.cli.command('create-admin')
+@click.argument('username')
+@click.argument('password')
+@with_appcontext
+def create_admin(username, password):
+    from werkzeug.security import generate_password_hash
+    admin = Admin(username=username, password=generate_password_hash(password))
+    db.session.add(admin)
+    db.session.commit()
+    click.echo(f'Admin {username} created successfully.')
+
 @app.route('/select_language/<language>', methods=['GET'])
 def select_language(language):
     session['language'] = language
     print(session["language"])
-    return redirect(url_for('register'))
-
+    return redirect(url_for('home'))
 if __name__ == '__main__':
     # Delete existing database file
     import os
@@ -102,7 +88,6 @@ if __name__ == '__main__':
     
     create_tables()  # Ensure tables are created before running the app
     app.run(debug=True)
-
 
 
 

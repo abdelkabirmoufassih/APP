@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <title>اختبار</title>
+    <title>معلومات</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -10,7 +9,7 @@
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ url_for('static', filename='style-Quiz.css') }}"
+      href="{{ url_for('static', filename='style-Information.css') }}"
     />
     <link rel="icon" href="logo-azura.svg" />
     <style>
@@ -20,83 +19,37 @@
         text-align: right;
         font-family: Tajawal;
       }
-      .text-center {
-        text-align: center;
+      .flash-messages {
+        margin: 20px;
       }
-      .float-right {
-        float: left;
+      .alert {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
       }
-      .form-container label {
-        text-align: right;
+      .alert-success {
+        background-color: #d4edda;
+        color: #155724;
       }
-      .form-check-label {
-        margin-right: 20px;
+      .alert-error {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+      .alert-info {
+        background-color: #d1ecf1;
+        color: #0c5460;
       }
     </style>
-    <script>
-      function startTimer(duration, display, form) {
-        var timer = duration,
-          minutes,
-          seconds;
-        var countdown = setInterval(function () {
-          minutes = parseInt(timer / 60, 10);
-          seconds = parseInt(timer % 60, 10);
-
-          minutes = minutes < 10 ? "0" + minutes : minutes;
-          seconds = seconds < 10 ? "0" + seconds : seconds;
-
-          display.textContent = minutes + ":" + seconds;
-
-          if (--timer < 0) {
-            clearInterval(countdown);
-            form.submit();
-          }
-        }, 1000);
-      }
-
-      window.onload = function () {
-        var startTimeStr = "{{ start_time }}";
-        if (!startTimeStr) {
-          console.error("Start time is not defined.");
-          return;
-        }
-
-        var startTime = new Date(startTimeStr).getTime();
-        if (isNaN(startTime)) {
-          console.error("Invalid start time:", startTimeStr);
-          return;
-        }
-
-        var currentTime = new Date().getTime();
-        var elapsedTime = Math.floor((currentTime - startTime) / 1000);
-        var quizDuration = 60 * 20; // 20 minutes in seconds
-        var remainingTime = quizDuration - elapsedTime;
-
-        console.log("Start Time (UTC):", new Date(startTime));
-        console.log("Current Time:", new Date(currentTime));
-        console.log("Elapsed Time (seconds):", elapsedTime);
-        console.log("Remaining Time (seconds):", remainingTime);
-
-        // Adjust this condition to ensure you see the form before it submits
-        if (remainingTime <= 0) {
-          document.querySelector("#quiz-form").submit();
-        } else {
-          var display = document.querySelector("#time");
-          var form = document.querySelector("#quiz-form");
-          startTimer(remainingTime, display, form);
-        }
-      };
-    </script>
   </head>
   <body>
     <div class="jumbotron text-center">
       <img
         src="{{ url_for('static', filename='logo-azura.svg') }}"
-        alt="logo-azura"
+        alt="شعار"
         class="float-right"
         id="logo"
       />
-      <h1>تدريب الموظفين</h1>
+      <h1 style="text-align: center">تكوين الموظف</h1>
     </div>
 
     <div class="container mt-5">
@@ -104,41 +57,116 @@
         style="
           margin-bottom: 5%;
           text-align: center;
-          font-family: Tajawal;
+          font-family: -webkit-body;
           color: snow;
         "
       >
-        يرجى إدخال معلوماتك الشخصية ووضع العلامات على الإجابات
+        يرجى إدخال معلوماتك الشخصية
       </h4>
-      <p>
-        <strong><span id="time">20:00</span>: الوقت المتبقي</strong>
-      </p>
+
+      <!-- Flash messages specific to registration -->
+      {% with messages = get_flashed_messages(with_categories=True) %} {% if
+      messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+
       <form
-        id="quiz-form"
-        action="{{ url_for('auth.submit_quiz', quiz_id=quiz.id) }}"
-        method="post"
+        action="{{ url_for('auth.register') }}"
+        method="POST"
         class="form-container border-form"
       >
-        <div class="container" id="questions">
-          {% for question in quiz.questions %}
-          <div class="mb-3">
-            <p><strong>{{ question.title }}</strong></p>
-            {% for option in question.options %}
-            <div class="form-check">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                name="question_{{ question.id }}"
-                value="{{ option.id }}"
-              />
-              <label class="form-check-label"> {{ option.text }} </label>
-            </div>
-            {% endfor %}
+        <input type="hidden" name="language" value="ar" />
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="emp_id">رقم الموظف:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="emp_id"
+              name="emp_id"
+              required
+            />
           </div>
-          {% endfor %}
+          <div class="form-group col-md-6">
+            <label for="cin">رقم البطاقة الشخصية:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="cin"
+              name="cin"
+              required
+            />
+          </div>
         </div>
-        <button type="submit" class="submit-button">إرسال</button>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="first_name">الاسم الأول:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="first_name"
+              name="first_name"
+              required
+            />
+          </div>
+          <div class="form-group col-md-6">
+            <label for="last_name">اسم العائلة:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="last_name"
+              name="last_name"
+              required
+            />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="service">القسم:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="service"
+              name="service"
+              required
+            />
+          </div>
+          <div class="form-group col-md-6">
+            <label for="site">الموقع:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="site"
+              name="site"
+              required
+            />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="password">كلمة السر:</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              required
+            />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary submit-button">
+          تأكيد
+        </button>
       </form>
+      <div class="text-center mt-4">
+        <a href="/" class="btn btn-primary btn-lg"
+          >العودة إلى الصفحة الرئيسية</a
+        >
+      </div>
     </div>
     <div style="height: 50px"></div>
   </body>

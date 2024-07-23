@@ -1,11 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session, make_response,abort, flash
-from flask_login import login_user, logout_user, login_required, current_user
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, make_response, flash
+from flask_login import login_user as user_login_user, logout_user as user_logout_user, login_required as user_login_required, current_user as user_current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-import uuid
-from models import User, db, Quiz, Question, QuestionTranslation, Option, OptionTranslation, Attempt, Answer  # Import db from models
-
+from models import db, User, Quiz, Question, QuestionTranslation, Option, OptionTranslation, Attempt, Answer
 from datetime import datetime
 import pytz 
+import uuid
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -49,14 +48,17 @@ def register():
             print(f"Error: {e}")
             flash('An error occurred while creating your account. Please try again.', 'error')
 
-    if request.method == 'GET' and current_user.is_authenticated:
-        return redirect(url_for('home'))  
+    if request.method == 'GET' and user_current_user.is_authenticated:
+        return redirect(url_for('auth.explanation'))  
     
-    return render_template(f'register_{session.get("language", "en")}.html')
-
+    return render_template(f'register_ar.html')
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+
+    if user_current_user.is_authenticated:
+        return redirect(url_for('auth.quiz'))
+
     if request.method == 'POST':
         emp_id = request.form.get('emp_id')
         password = request.form.get('password')
@@ -64,24 +66,21 @@ def login():
         user = User.query.filter_by(emp_id=emp_id).first()
 
         if user and check_password_hash(user.password, password):
-            login_user(user)
+            user_login_user(user)
             flash('Login successful!', 'success')
             return redirect(url_for('auth.explanation'))
         else:
             flash('Login failed. Check your emp_id and/or password.', 'error')
             return redirect(url_for('auth.login'))
-    
-    if current_user.is_authenticated:
-        return redirect(url_for('auth.explanation'))
     return render_template('login.html')
 
 @auth_bp.route('/logout')
-@login_required
+@user_login_required
 def logout():
-    logout_user()
+    user_logout_user()
     flash('Logged out successfully!', 'success')
-    return render_template('login.html')
-
+    session.clear()
+    return redirect(url_for('auth.login'))
 
 @auth_bp.route('/explanation')
 def explanation():
@@ -89,7 +88,7 @@ def explanation():
 
 @auth_bp.route('/quiz')
 def quiz():
-    if not current_user.is_authenticated:
+    if not user_current_user.is_authenticated:
         return redirect(url_for('auth.login'))  # Redirect to login if not authenticated
 
     try:
@@ -100,9 +99,9 @@ def quiz():
             return "No active quiz found.", 404
 
         # Check if the user has already attempted this quiz
-        attempt = Attempt.query.filter_by(user_id=current_user.id, quiz_id=active_quiz.id).first()
+        attempt = Attempt.query.filter_by(user_id=user_current_user.id, quiz_id=active_quiz.id).first()
         if attempt:
-            return redirect(url_for('auth.quiz_taken'))
+            return redirect(url_for('auth.show_result', status=attempt.status))
 
         # Initialize start_time in the session if it does not exist
         if 'start_time' not in session:
@@ -118,7 +117,9 @@ def quiz():
         ).get_or_404(active_quiz.id)
 
         # Fetch translations for questions and options
-        language = session.get('language', 'en')  # Default to English if no language is set
+        language = session.get('language', 'fr')  # Default to English if no language is set
+        print(session.get('language'))
+        print(language)
         questions_translations = (
             QuestionTranslation.query.filter(QuestionTranslation.language == language)
             .all()
@@ -155,10 +156,10 @@ def quiz():
 
         # Debugging: Print session and quiz details
         print(f"Session Start Time: {session['start_time']}")
-        print(f"User ID: {current_user.id}")
-        print(f"Quiz Data: {quiz_data}")
+        print(f"User ID: {user_current_user.id}")
 
-        template_name = f'quiz_{language}.html'
+        #template_name = f'quiz_{language}.html'
+        template_name = 'quiz_ar.html'
         response = make_response(render_template(template_name, quiz=quiz_data, start_time=session['start_time'], csrf_token=csrf_token))
         response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
         response.headers['Pragma'] = 'no-cache'
@@ -169,16 +170,12 @@ def quiz():
         print(f"Error occurred: {e}")
         return "An error occurred while fetching the quiz", 500
 
-@auth_bp.route('/quiz_taken')
-def quiz_taken():
-    return render_template('quiz_taken.html')
-
 @auth_bp.route('/submit_quiz/<int:quiz_id>', methods=['POST'])
 def submit_quiz(quiz_id):
-    if not current_user.is_authenticated:
+    if not user_current_user.is_authenticated:
         return redirect(url_for('auth.login'))  # Redirect if the user is not authenticated
 
-    user_id = current_user.id  # Use current_user.id instead of session['user_id']
+    user_id = user_current_user.id  # Use current_user.id instead of session['user_id']
     start_time_str = session.get('start_time')  # Get start_time from session
     end_time = datetime.utcnow()
 
@@ -308,9 +305,33 @@ def submit_quiz(quiz_id):
 @auth_bp.route('/result', methods=['GET'])
 def show_result():
     status = request.args.get('status', 'unknown')
-    return render_template(f'finish_{session.get("language", "en")}.html', status=status)
+    return render_template('finish.html', language=session.get("language", "en"), status=status)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#CODE FOR LATER
+
+"""
 @auth_bp.route('/admin/dashboard', methods=['GET', 'POST'])
 def admin_dashboard():
     quizzes = Quiz.query.all()
@@ -338,19 +359,16 @@ def manage_users():
 @auth_bp.route('/admin/view_user/<int:user_id>')
 def view_user(user_id):
     user = User.query.get_or_404(user_id)
-    
     # Fetch the user's attempts with explicit table aliases
     attempts = db.session.query(
         Quiz.title.label('quiz_title'),
         Attempt.score.label('score'),
         Attempt.status.label('status'),
-        Attempt.time.label('time')
-    ).join(Quiz, Attempt.quiz_id == Quiz.id) \
-     .filter(Attempt.user_id == user_id) \
-     .all()
-    
+        Attempt.time.label('time'))
+    .join(Quiz, Attempt.quiz_id == Quiz.id) \
+    .filter(Attempt.user_id == user_id) \
+    .all()
     return render_template('admin_view_user.html', user=user, attempts=attempts)
-
 
 @auth_bp.route('/admin/edit_user/<int:user_id>', methods=['GET', 'POST'])
 def edit_user(user_id):
@@ -423,22 +441,32 @@ def edit_quiz(quiz_id):
 
     return render_template('edit_quiz.html', quiz=quiz)
 
+@auth_bp.route('/admin')
+def admin_quiz_attempts():
+    # Query to get all attempts with user and quiz information
+    attempts = Attempt.query.join(User, Attempt.user_id == User.id).join(
+        Quiz, Attempt.quiz_id == Quiz.id).add_columns(
+        Attempt.id,
+        Attempt.user_id,
+        Attempt.quiz_id,
+        Attempt.score,
+        Attempt.status,
+        Attempt.time,
+        User.emp_id,
+        User.cin,
+        User.first_name,
+        User.last_name,
+        User.service,
+        User.site,
+        Quiz.title.label('quiz_title')
+    ).all()
 
+    print(f"Found {len(attempts)} attempts")  # Debug print
 
+    for attempt in attempts:
+        print(f"Attempt: User ID={attempt.user_id}, Quiz ID={attempt.quiz_id}, Quiz Title={attempt.quiz_title}, Score={attempt.score}, Status={attempt.status}, Time={attempt.time}, User Name={attempt.first_name} {attempt.last_name}, Employee ID={attempt.emp_id}")
 
-
-
-
-
-
-
-
-
-
-@auth_bp.route('/admin/attempts')
-def manage_attempts():
-    attempts = Attempt.query.all()  # Assuming you have an Attempt model defined
-    return render_template('admin_manage_attempts.html', attempts=attempts)
+    return render_template('admin_dashboard.html', attempts=attempts)
 
 @auth_bp.route('/admin/create_quiz', methods=['GET', 'POST'])
 def create_quiz():
@@ -503,7 +531,7 @@ def delete_quiz(quiz_id):
     Quiz.query.filter_by(id=quiz_id).delete()
     db.session.commit()
     return redirect(url_for('auth.manage_quizzes'))
-
+"""
 
 
 

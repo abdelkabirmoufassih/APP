@@ -15,7 +15,19 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String, nullable=False)
 
     def get_id(self):
-        return str(self.id)
+        return f"user_{self.id}"
+
+class Admin(db.Model, UserMixin):
+    __tablename__ = 'Admins'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String, unique=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
+
+    def get_id(self):
+        return f"admin_{self.id}"
+
+    def __repr__(self):
+        return f'<Admin {self.username}>'
 
 class Quiz(db.Model):
     __tablename__ = 'Quizzes'
@@ -68,6 +80,9 @@ class Attempt(db.Model):
     status = db.Column(db.String, nullable=False)
     time = db.Column(db.DateTime, nullable=False)
 
+    user = db.relationship('User', backref='attempts')
+    quiz = db.relationship('Quiz', backref='attempts')
+
 class Answer(db.Model):
     __tablename__ = 'Answers'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -75,9 +90,3 @@ class Answer(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('Questions.id'), nullable=False)
     option_id = db.Column(db.Integer, db.ForeignKey('Options.id'), nullable=False)
     is_correct = db.Column(db.Boolean, nullable=False)
-
-class InitializationStatus(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    initialized = db.Column(db.Boolean, default=False)
-
-
